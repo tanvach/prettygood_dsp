@@ -202,5 +202,5 @@ void setup() {
 }
 
 void loop() {
-  EnterDeepSleep();
+  // EnterDeepSleep();
 }
