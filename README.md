@@ -56,7 +56,7 @@ Once build is completed successfully, click the arrow buttom to upload the firmw
 
 ![upload](images/upload_button.png)
 
-**NOTE: If the uplaod failed, your board may need to be put into 'program mode'. This is done by double clicking the RESET button on the DSP PCB. In this mode, the blue LED will stay on.**
+**NOTE: If the upload fails, your board may need to be put into 'program mode'. This is done by double clicking the RESET button on the DSP PCB. In this mode, the blue LED will stay on.**
 
 
 ## Dependencies
