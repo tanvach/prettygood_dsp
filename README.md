@@ -32,9 +32,31 @@ The advantage of using this bootloader is that any projects that can run on SAMD
 
 One limitation - the I2S peripheral needs to be on to provide clock signals to the SGTL5000 codec. So the I2S/SPI pins are not available as GPIO. Otherwise the TX and A0-A3 pins are free and available.
 
-# Installation
-Open the repo in VSCode with PlatformIO installed. It should automatically download all dependencies. Compile and upload main.cpp through USB port. 
+# Update firmware
+The board firmare is updatable via USB. Follow these steps to compile and upload new firmware to the board.
 
+## 1. Install Platform IO
+You need to first install VSCode, then Platform IO by following [these instructions](https://platformio.org/install/ide?install=vscode).
+
+## 2. Open in Platform IO
+Download this repository using git command, or download and extract the zip file on your computer.
+
+![download](images/download_button.png)
+
+In VSCode (with Platform IO installed), choose 'Add Folder to Workspace' and open this repo's folder.
+
+## 3. Make changes and upload
+Once you're happy making changes, click the checkmark button at the bottom of VSCode to build the new firmware.
+
+![build](images/build_button.png)
+
+Platform IO should fetch all the dependencies automatically for you.
+
+Once build is completed successfully, click the arrow buttom to upload the firmware through the USB.
+
+![upload](images/upload_button.png)
+
+**NOTE: If the uplaod failed, your board may need to be put into 'program mode'. This is done by double clicking the RESET button on the DSP PCB. In this mode, the blue LED will stay on.**
 
 
 ## Dependencies
