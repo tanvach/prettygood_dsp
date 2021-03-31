@@ -8,7 +8,7 @@ Supports:
 -   Stereo surround expansion.
 -   Automatic volume control.
 
-Please see the SGTL5000 [documentation](https://www.pjrc.com/teensy/SGTL5000.pdf) for all DSP features.
+Please see the SGTL5000 [documentation](https://www.pjrc.com/teensy/SGTL5000.pdf) for all DSP features. Credit to [Paul Stoffregen of PJRC.com](https://github.com/PaulStoffregen/Audio) for creating the Teensy Audio library (we're reusing a SGTL5000 component in the code).
 
 TODO:
 -   Make use of the USER button for switching between presets.
