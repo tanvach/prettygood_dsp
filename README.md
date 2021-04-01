@@ -43,7 +43,7 @@ Download this repository using git command, or download and extract the zip file
 
 ![download](images/download_button.png)
 
-In VSCode (with Platform IO installed), choose 'Add Folder to Workspace' and open this repo's folder.
+In VSCode (with Platform IO installed), choose 'Open...' and select this repo's 'prettygood_dsp' folder.
 
 ## 3. Make changes and upload
 Once you're happy making changes, click the checkmark button at the bottom of VSCode to build the new firmware.
