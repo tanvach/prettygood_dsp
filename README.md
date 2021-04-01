@@ -33,7 +33,9 @@ The advantage of using this bootloader is that any projects that can run on SAMD
 One limitation - the I2S peripheral needs to be on to provide clock signals to the SGTL5000 codec. So the I2S/SPI pins are not available as GPIO. Otherwise the TX and A0-A3 pins are free and available.
 
 # Update firmware
-The board firmare is updatable via USB. Follow these steps to compile and upload new firmware to the board.
+The board firmare is updatable via USB. Follow these steps to compile and upload new firmware to the board. 
+
+*This board comes with a fail-safe bootloader mode, making it almost impossible to brick by updating the firmware through USB.*
 
 ## 1. Install Platform IO
 You need to first install VSCode, then Platform IO by following [these instructions](https://platformio.org/install/ide?install=vscode).
@@ -43,21 +45,25 @@ Download this repository using git command, or download and extract the zip file
 
 ![download](images/download_button.png)
 
-In VSCode (with Platform IO installed), choose 'Open...' and select this repo's 'prettygood_dsp' folder.
+In VSCode (with Platform IO installed), choose 'Open...' or 'Open Folder...' and select this repo's 'prettygood_dsp' folder.
 
 ## 3. Make changes and upload
 Once you're happy making changes, click the checkmark button at the bottom of VSCode to build the new firmware.
 
 ![build](images/build_button.png)
 
-Platform IO should fetch all the dependencies automatically for you.
+Platform IO will fetch all the dependencies automatically for you.
 
-Once build is completed successfully, click the arrow buttom to upload the firmware through the USB.
+**Connect the DSP board via USB and double clicking the RESET button. This triggers the boot loader mode. Check that the blue LED stays on and QT_BOOT drive is mounted on your desktop.**
+
+Click upload button. It may take a minute or so for Platform IO to automatically detect the serial / COM port and upload new firmware.
+
 
 ![upload](images/upload_button.png)
 
-**NOTE: If the upload fails, your board may need to be put into 'program mode'. This is done by double clicking the RESET button on the DSP PCB. In this mode, the blue LED will stay on.**
+If upload hangs or fails, try disconnecting the USB and putting the board in boot loader mode again.
 
+Once sucessfully uploaded, you can disconnect the USB cable.
 
 ## Dependencies
  * [Adafruit Zero I2S](https://www.arduino.cc/reference/en/libraries/adafruit-zero-i2s-library/)
