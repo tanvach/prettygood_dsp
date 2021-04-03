@@ -13,13 +13,22 @@ Please see the SGTL5000 [documentation](https://www.pjrc.com/teensy/SGTL5000.pdf
 TODO:
 -   Make use of the USER button for switching between presets.
 -   Refactor code and put configurations in a header file.
+- Periodically draw large current to keep USB power bank on.
 
 # Usage
-- Plug in a USB power source (anything from computer, phone, Quest/Quest 2 or USB power bank).
+- Plug in a USB power source. Anything from computer, phone, Quest/Quest 2 or some USB power bank (see below) should work.
 - Plug in 3.5mm stereo jack from audio out to LINEIN.
 - Plug your headphones into OUT.
 
 NOTE: the OUT port is designed to drive headphones. It may not work as intended as an input into another audio device.
+
+# USB Power Bank Compatibility
+Most USB power banks will turn off when powering the board, since the current draw is too low.
+
+- Some brands will allow 'low power draw' mode by holding the on button for few seconds (i.e. Xiaomi).
+
+- A list of tested power banks that support low power draw https://www.candlepowerforums.com/vb/showthread.php?440476-USB-powerbank-WITHOUT-auto-off
+
 
 # Board Design
 ![Board Layout](board/board_layout_v1.png)

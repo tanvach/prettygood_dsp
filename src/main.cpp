@@ -26,13 +26,22 @@
 
 #include <Arduino.h>
 #include "control_sgtl5000.h"
-#include "Adafruit_ZeroI2S.h"
+#include <Adafruit_ZeroI2S.h>
+#include <RTCZero.h>
+
+// Pins
+#define LED_PIN 12
+#define I2S_RX_PIN 17
+#define I2S_TX_PIN PIN_I2S_SD
 
 #define SAMPLERATE_HZ 48000
 #define BITWIDTH I2S_16_BIT
 
 AudioControlSGTL5000 audioShield;
-Adafruit_ZeroI2S i2s;
+
+Adafruit_ZeroI2S i2s = Adafruit_ZeroI2S(PIN_I2S_FS, PIN_I2S_SCK, I2S_RX_PIN, I2S_TX_PIN);
+
+RTCZero rtc;
 
 void SetupI2S() {
   
@@ -40,66 +49,9 @@ void SetupI2S() {
     while (1);            
   }
 
-  // This works around a quirk in the hardware (errata 1.2.1) -
-  // the DFLLCTRL register must be manually reset to this value before
-  // configuration.
-  while ( (SYSCTRL->PCLKSR.reg & SYSCTRL_PCLKSR_DFLLRDY) == 0 );
-  SYSCTRL->DFLLCTRL.reg = SYSCTRL_DFLLCTRL_ENABLE;
-  while ( (SYSCTRL->PCLKSR.reg & SYSCTRL_PCLKSR_DFLLRDY) == 0 );
-
-  // Overclock to 49.152MHz so that divide by 4 gives 12.288MHz for MCLK
-  // https://github.com/arduino/ArduinoCore-samd/blob/master/cores/arduino/startup.c
-  // Arduino core already sets DFLL clock source as internal OSC32K 32.768kHz oscillator
-  // So just need to adjust the multiplier to 1500 * 32.768kHz = 49.152MHz
-  SYSCTRL->DFLLMUL.reg =
-      SYSCTRL_DFLLMUL_MUL(1500) |
-      /* The coarse and fine step are used by the DFLL to lock
-       on to the target frequency. These are set to half
-       of the maximum value. Lower values mean less overshoot,
-       whereas higher values typically result in some overshoot but
-       faster locking. */
-      SYSCTRL_DFLLMUL_FSTEP(511) |
-      SYSCTRL_DFLLMUL_CSTEP(31);
-  while(!SYSCTRL->PCLKSR.bit.DFLLRDY);
-
-  // Setting up the DFLL is to set it to closed loop mode and turn it on
-  SYSCTRL->DFLLCTRL.reg |= 
-    SYSCTRL_DFLLCTRL_MODE |
-    SYSCTRL_DFLLCTRL_WAITLOCK |
-    SYSCTRL_DFLLCTRL_RUNSTDBY |
-    SYSCTRL_DFLLCTRL_ENABLE;
-  while (!SYSCTRL->PCLKSR.bit.DFLLLCKC || !SYSCTRL->PCLKSR.bit.DFLLLCKF) {}
-
-  // WIP: block to reference DFLL to USB start of frame for better 12MHz accuracy
-  // If USB not attached then just output factory calibrated 12MHz
-  // Potentially uses more power but seems to have the same current draw
-  // {
-  //   // Enable USB clock recovery mode
-  //   SYSCTRL->DFLLCTRL.reg |=
-  //         SYSCTRL_DFLLCTRL_USBCRM |
-  //         /* Disable chill cycle as per datasheet to speed up locking.
-  //           This is specified in section 17.6.7.2.2, and chill cycles
-  //           are described in section 17.6.7.2.1. */
-  //         SYSCTRL_DFLLCTRL_CCDIS |
-  //         SYSCTRL_DFLLCTRL_RUNSTDBY |
-  //         SYSCTRL_DFLLCTRL_ENABLE;
-  //   while ( (SYSCTRL->PCLKSR.reg & SYSCTRL_PCLKSR_DFLLRDY) == 0 );
-
-  //   // Configure the DFLL to multiply the 1 kHz clock to 48 MHz
-  //   SYSCTRL->DFLLMUL.reg |=
-  //         /* This value is output frequency / reference clock frequency,
-  //             so 48 MHz / 1 kHz */
-  //         SYSCTRL_DFLLMUL_MUL(48000);
-  //         // SYSCTRL_DFLLMUL_MUL(49152);
-
-  //   // Closed loop mode
-  //   SYSCTRL->DFLLCTRL.bit.MODE = 1;
-  //   while ( !SYSCTRL->PCLKSR.bit.DFLLRDY );
-  // }
-
   // Change I2S clocks to output correct freq
   // For SAMD21, Adafruit_ZeroI2S divides DFLL48M clock equally for MCLK and BCLK
-  // Need to change so that MCLK = 49.152MHz / 4 = 12.288Mhz
+  // Need to change so that MCLK = 12Mhz
   GCLK->GENDIV.reg = GCLK_GENDIV_DIV(4) |             // Divide by 4
                      GCLK_GENDIV_ID(I2S_GCLK_ID_0);   // Divide the clock for I2S
   while (GCLK->STATUS.bit.SYNCBUSY);
@@ -180,17 +132,9 @@ void SetupSGTL5000() {
   audioShield.unmuteHeadphone();
 }
 
-void EnterDeepSleep() {
-  // Enter deep sleep / stand by to reduce power
-  SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-  __DSB();
-  __WFI();
-}
-
+// Begin usual Arduino code
 void setup() {
-
-  // Turn off LED
-  REG_PORT_OUTCLR0 = PORT_PA15;
+  // Serial.begin(115200);
 
   // Set up I2S clocks
   SetupI2S();
@@ -199,8 +143,13 @@ void setup() {
   // Set up SGTL5000
   SetupSGTL5000();
   delay(100);
+
+  // Turn LED off
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, LOW);
 }
 
 void loop() {
-  // EnterDeepSleep();
+  // Enter stand by to save power
+  rtc.standbyMode();
 }
