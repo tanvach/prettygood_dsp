@@ -30,12 +30,16 @@ Most USB power banks will turn off when powering the board, since the current dr
 - Use a USB splitter cable to power both the headset and DSP board (see below).
 
 # USB Splitter Cable for Oculus Link
-This splitter cable is confirmed to work with Oculus Link and from power bank. It provides power and USB 2.0 data to the headset (USB-C) and just power to DSP board (Micro USB): https://www.amazon.com/gp/product/B078MFCVLF/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
+This splitter cable is confirmed to work with Oculus Link and from power bank. It takes a Micro USB connection and split into USB-C (provides power and USB 2.0 data) and Micro USB (provides power only): https://www.amazon.com/gp/product/B078MFCVLF/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
 
-!()[images/micro_usb_splitter.png]
+![splitter cable](images/micro_usb_splitter.png)
+
+You may also need to use a USB-C to Micro USB adaptor like this: https://www.amazon.com/gp/product/B087WKS9NZ/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
+
+![usb c to micro](images/usbc_to_micro.png)
 
 # Board Design
-![Board Layout](board/board_layout_v1.png)
+![Board Layout](images/)
 
 The board is designed based on [Adafruit SAMD21 QtPy](https://learn.adafruit.com/adafruit-qt-py). The default bootloader is vanilla SAMD21 QtPy and can be download from [Adafruit SAMD UF2 repo](https://github.com/adafruit/uf2-samdx1/releases). The only difference is that we've replaced the NeoPixel with a blue LED.
 
