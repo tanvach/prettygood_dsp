@@ -1,5 +1,7 @@
 # Prettygood DSP
 
+![board photo](images/v1_photo.jpeg)
+
 A self contained, Arduino compatible board for applying audio DSP. The intended purpose is to equalize and apply bass boost to [BMR VR off ear headphones](https://prettygood3d.com/post/999028410814/quest-2-off-ear-bmr-v01), but can be adapted for any other light DSP tasks by SGTL5000 codec.
 
 Supports:
@@ -38,17 +40,6 @@ You may also need to use a USB-C to Micro USB adaptor like this: https://www.ama
 
 ![usb c to micro](images/usbc_to_micro.png)
 
-# Board Design
-![Board Layout](images/)
-
-The board is designed based on [Adafruit SAMD21 QtPy](https://learn.adafruit.com/adafruit-qt-py). The default bootloader is vanilla SAMD21 QtPy and can be download from [Adafruit SAMD UF2 repo](https://github.com/adafruit/uf2-samdx1/releases). The only difference is that we've replaced the NeoPixel with a blue LED.
-
-The schematic can be found [here](board/schematic_v1.pdf).
-
-The advantage of using this bootloader is that any projects that can run on SAMD21 boards (Aduino Zero, QtPy, Trinket M0, Feather M0) can theoretically run on Prettygood DSP.
-
-One limitation - the I2S peripheral needs to be on to provide clock signals to the SGTL5000 codec. So the I2S/SPI pins are not available as GPIO. Otherwise the TX and A0-A3 pins are free and available.
-
 # Update firmware
 The board firmare is updatable via USB. Follow these steps to compile and upload new firmware to the board. 
 
@@ -58,7 +49,7 @@ The board firmare is updatable via USB. Follow these steps to compile and upload
 You need to first install VSCode, then Platform IO by following [these instructions](https://platformio.org/install/ide?install=vscode).
 
 ## 2. Open in Platform IO
-Download this repository using git command, or download and extract the zip file on your computer.
+Download this repository using git clone command, or download and extract the zip file on your computer.
 
 ![download](images/download_button.png)
 
@@ -84,6 +75,17 @@ Once sucessfully uploaded, you can disconnect the USB cable.
 
 ## Dependencies
  * [Adafruit Zero I2S](https://www.arduino.cc/reference/en/libraries/adafruit-zero-i2s-library/)
+
+# Board Design
+![Board Layout](board/board_layout_v1.png)
+
+The board is designed based on [Adafruit SAMD21 QtPy](https://learn.adafruit.com/adafruit-qt-py). The default bootloader is vanilla SAMD21 QtPy and can be download from [Adafruit SAMD UF2 repo](https://github.com/adafruit/uf2-samdx1/releases). The only difference is that we've replaced the NeoPixel with a blue LED.
+
+The schematic can be found [here](board/schematic_v1.pdf).
+
+The advantage of using this bootloader is that any projects that can run on SAMD21 boards (Aduino Zero, QtPy, Trinket M0, Feather M0) can theoretically run on Prettygood DSP.
+
+One limitation - the I2S peripheral needs to be on to provide clock signals to the SGTL5000 codec. So the I2S/SPI pins are not available as GPIO. Otherwise the TX and A0-A3 pins are free and available.
 
 # Contributing
 Contributions are welcome!
