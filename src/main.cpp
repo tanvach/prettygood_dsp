@@ -34,7 +34,7 @@
 #define I2S_RX_PIN 17
 #define I2S_TX_PIN PIN_I2S_SD
 
-#define SAMPLERATE_HZ 48000
+#define SAMPLERATE_HZ 44100
 #define BITWIDTH I2S_16_BIT
 
 AudioControlSGTL5000 audioShield;
@@ -49,32 +49,32 @@ void SetupI2S() {
     while (1);            
   }
 
-  // Change I2S clocks to output correct freq
+  // Change I2S clocks to output reasonable frequency for SGTL5000's PLL
   // For SAMD21, Adafruit_ZeroI2S divides DFLL48M clock equally for MCLK and BCLK
   // Need to change so that MCLK = 12Mhz
   GCLK->GENDIV.reg = GCLK_GENDIV_DIV(4) |             // Divide by 4
                      GCLK_GENDIV_ID(I2S_GCLK_ID_0);   // Divide the clock for I2S
   while (GCLK->STATUS.bit.SYNCBUSY);
-  
-  // Then change BCLK to match required for sampling rate
-  I2S->CLKCTRL[0].bit.MCKDIV = 7;
 
-  // Enable MCLK on Pin PA09
+  // // Enable MCLK on Pin PA09
   I2S->CLKCTRL[0].bit.MCKEN = 1;
   PORT->Group[PORTA].PINCFG[9].bit.PMUXEN = 1;
   PORT->Group[PORTA].PMUX[9 >> 1].reg |= PORT_PMUX_PMUXO_G; 
+
+  // Disable BCLK and FS since we're using SGTL5000 as master
+  // TODO: Change this so receiving I2S works
+  PORT->Group[PORTA].PINCFG[10].bit.PMUXEN = 0;
+  PORT->Group[PORTA].PINCFG[11].bit.PMUXEN = 0;
 
   // Configure the regulator to run in normal mode when in standby mode
   // Otherwise it defaults to low power mode and can only supply 50 uA
   SYSCTRL->VREG.bit.RUNSTDBY = 1;
 
   // Enable the DFLL48M clock in standby mode
-  // SYSCTRL->DFLLCTRL.bit.ONDEMAND = 0;
   SYSCTRL->DFLLCTRL.bit.RUNSTDBY = 1;
 
   // DFLL48M is clocked from OSC32K when crystalless
   // Enable the OSC32K clock in standby mode
-  // SYSCTRL->OSC32K.bit.ONDEMAND = 0;
   SYSCTRL->OSC32K.bit.RUNSTDBY = 1;
 
   // Run generic clock in deep sleep
@@ -86,9 +86,9 @@ void SetupI2S() {
 
 void SetupSGTL5000() {
 
-  audioShield.enable();
+  // Enable as Master, input clock 12Mhz
+  audioShield.enable(12000000);
   audioShield.muteHeadphone();
-  audioShield.volume(0);
   audioShield.inputSelect(AUDIO_INPUT_LINEIN);
 
   // Usage: audioShield.enhanceBass((float)lr_level,(float)bass_level,(uint8_t)hpf_bypass,(uint8_t)cutoff);
@@ -128,7 +128,7 @@ void SetupSGTL5000() {
   audioShield.adcHighPassFilterDisable();
 
   // Enable output
-  audioShield.volume(0.7);
+  audioShield.volume(0.6);
   audioShield.unmuteHeadphone();
 }
 

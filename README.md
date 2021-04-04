@@ -26,9 +26,13 @@ NOTE: the OUT port is designed to drive headphones. It may not work as intended 
 Most USB power banks will turn off when powering the board, since the current draw is too low.
 
 - Some brands will allow 'low power draw' mode by holding the on button for few seconds (i.e. Xiaomi).
-
 - A list of tested power banks that support low power draw https://www.candlepowerforums.com/vb/showthread.php?440476-USB-powerbank-WITHOUT-auto-off
+- Use a USB splitter cable to power both the headset and DSP board (see below).
 
+# USB Splitter Cable for Oculus Link
+This splitter cable is confirmed to work with Oculus Link and from power bank. It provides power and USB 2.0 data to the headset (USB-C) and just power to DSP board (Micro USB): https://www.amazon.com/gp/product/B078MFCVLF/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
+
+!()[images/micro_usb_splitter.png]
 
 # Board Design
 ![Board Layout](board/board_layout_v1.png)
