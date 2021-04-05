@@ -49,14 +49,26 @@ void SetupI2S() {
     while (1);            
   }
 
+  // // Change I2S clocks to output reasonable frequency for SGTL5000's PLL
+  // // For SAMD21, Adafruit_ZeroI2S divides DFLL48M clock equally for MCLK and BCLK
+  // // Need to change so that MCLK = 8Mhz
+  // GCLK->GENDIV.reg = GCLK_GENDIV_DIV(6) |             // Divide by 4
+  //                    GCLK_GENDIV_ID(I2S_GCLK_ID_0);   // Divide the clock for I2S
+  // while (GCLK->STATUS.bit.SYNCBUSY);
+
   // Change I2S clocks to output reasonable frequency for SGTL5000's PLL
-  // For SAMD21, Adafruit_ZeroI2S divides DFLL48M clock equally for MCLK and BCLK
-  // Need to change so that MCLK = 12Mhz
-  GCLK->GENDIV.reg = GCLK_GENDIV_DIV(4) |             // Divide by 4
-                     GCLK_GENDIV_ID(I2S_GCLK_ID_0);   // Divide the clock for I2S
+  // Override and use OSC8M Oscillator because it's lower power and less noisy
+  while (GCLK->STATUS.bit.SYNCBUSY);
+  GCLK->GENDIV.bit.ID = I2S_CLOCK_GENERATOR;
+  GCLK->GENDIV.bit.DIV = 1;
+  while (GCLK->STATUS.bit.SYNCBUSY);
+  GCLK->GENCTRL.bit.ID = I2S_CLOCK_GENERATOR;
+  GCLK->GENCTRL.bit.SRC = GCLK_GENCTRL_SRC_OSC8M_Val;
+  GCLK->GENCTRL.bit.IDC = 1;
+  GCLK->GENCTRL.bit.GENEN = 1;
   while (GCLK->STATUS.bit.SYNCBUSY);
 
-  // // Enable MCLK on Pin PA09
+  // Enable MCLK on Pin PA09
   I2S->CLKCTRL[0].bit.MCKEN = 1;
   PORT->Group[PORTA].PINCFG[9].bit.PMUXEN = 1;
   PORT->Group[PORTA].PMUX[9 >> 1].reg |= PORT_PMUX_PMUXO_G; 
@@ -70,12 +82,8 @@ void SetupI2S() {
   // Otherwise it defaults to low power mode and can only supply 50 uA
   SYSCTRL->VREG.bit.RUNSTDBY = 1;
 
-  // Enable the DFLL48M clock in standby mode
-  SYSCTRL->DFLLCTRL.bit.RUNSTDBY = 1;
-
-  // DFLL48M is clocked from OSC32K when crystalless
-  // Enable the OSC32K clock in standby mode
-  SYSCTRL->OSC32K.bit.RUNSTDBY = 1;
+  // Run 8MHz oscillator in deep sleep
+  SYSCTRL->OSC8M.bit.RUNSTDBY = 1;
 
   // Run generic clock in deep sleep
   GCLK->GENCTRL.bit.RUNSTDBY = 1;
@@ -86,8 +94,8 @@ void SetupI2S() {
 
 void SetupSGTL5000() {
 
-  // Enable as Master, input clock 12Mhz
-  audioShield.enable(12000000);
+  // Enable as Master, input clock 8Mhz
+  audioShield.enable(8000000);
   audioShield.muteHeadphone();
   audioShield.inputSelect(AUDIO_INPUT_LINEIN);
 
