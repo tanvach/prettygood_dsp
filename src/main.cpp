@@ -25,8 +25,8 @@
  */
 
 #include <Arduino.h>
-#include "control_sgtl5000.h"
 #include <Adafruit_ZeroI2S.h>
+#include "control_sgtl5000.h"
 #include <RTCZero.h>
 
 // Pins
@@ -34,13 +34,13 @@
 #define I2S_RX_PIN 17
 #define I2S_TX_PIN PIN_I2S_SD
 
+// Audio
 #define SAMPLERATE_HZ 44100
 #define BITWIDTH I2S_16_BIT
-
 AudioControlSGTL5000 audioShield;
-
 Adafruit_ZeroI2S i2s = Adafruit_ZeroI2S(PIN_I2S_FS, PIN_I2S_SCK, I2S_RX_PIN, I2S_TX_PIN);
 
+// Stand by and alarms
 RTCZero rtc;
 
 void SetupI2S() {
@@ -136,7 +136,7 @@ void SetupSGTL5000() {
   audioShield.adcHighPassFilterDisable();
 
   // Enable output
-  audioShield.volume(0.6);
+  audioShield.volume(0.7);
   audioShield.unmuteHeadphone();
 }
 

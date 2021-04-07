@@ -41,7 +41,15 @@ You may also need to use a USB-C to Micro USB adaptor like this: https://www.ama
 ![usb c to micro](images/usbc_to_micro.png)
 
 # Update firmware
-The board firmare is updatable via USB. Follow these steps to compile and upload new firmware to the board. 
+The board firmare is updatable via USB.
+
+- Connect the DSP board via USB and double clicking the RESET button. This triggers the boot loader mode.
+- Check that the blue LED stays on and QTPY_BOOT drive is mounted on your desktop.
+- Download 'firmware.uf2' file and copy it to the QTPY_BOOT drive. It should unmount automatically.
+- The firmware update is complete. You can now disconnect the USB cable.
+
+# Compile firmware
+If you want to make changes to the firmware, you'd need to follow these steps.
 
 *This board comes with a fail-safe bootloader mode, making it almost impossible to brick by updating the firmware through USB.*
 
@@ -62,10 +70,9 @@ Once you're happy making changes, click the checkmark button at the bottom of VS
 
 Platform IO will fetch all the dependencies automatically for you.
 
-**Connect the DSP board via USB and double clicking the RESET button. This triggers the boot loader mode. Check that the blue LED stays on and QT_BOOT drive is mounted on your desktop.**
+**Connect the DSP board via USB and double clicking the RESET button. This triggers the boot loader mode. Check that the blue LED stays on and QTPY_BOOT drive is mounted on your desktop.**
 
 Click upload button. It may take a minute or so for Platform IO to automatically detect the serial / COM port and upload new firmware.
-
 
 ![upload](images/upload_button.png)
 
