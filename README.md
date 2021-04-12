@@ -40,6 +40,18 @@ You may also need to use a USB-C to Micro USB adaptor like this: https://www.ama
 
 ![usb c to micro](images/usbc_to_micro.png)
 
+# WebUSB configurator (experimental)
+The latest version of the firmware allows you to config the DSP settings with Chrome browser through WebUSB standard.
+
+To enter and use the WebUSB mode:
+- Connect the board to your computer with a USB cable.
+- Open a recent version of Chrome.
+- Press *RESET* while the *USER* button is held down.
+- Chrome should recorgnize the device as 'QT Py M0'.
+- Click on the notification to go to the configuration page (or click on this link).
+
+![chrome notification](images/chrome_notification.png)
+
 # Update firmware
 The board firmare is updatable via USB.
 
@@ -63,25 +75,21 @@ Download this repository using git clone command, or download and extract the zi
 
 In VSCode (with Platform IO installed), choose 'Open...' or 'Open Folder...' and select this repo's 'prettygood_dsp' folder.
 
-## 3. Make changes and upload
-Once you're happy making changes, click the checkmark button at the bottom of VSCode to build the new firmware.
+## 3. Make changes and compile
+Once you're happy making changes, select 'main.cpp' file and click the checkmark button at the bottom of VSCode to build the new firmware.
 
 ![build](images/build_button.png)
 
-Platform IO will fetch all the dependencies automatically for you.
+Platform IO will fetch all the dependencies automatically for you and compile the code. The file 'firmware.uf2' will be overwritten with the new version.
 
-**Connect the DSP board via USB and double clicking the RESET button. This triggers the boot loader mode. Check that the blue LED stays on and QTPY_BOOT drive is mounted on your desktop.**
-
-Click upload button. It may take a minute or so for Platform IO to automatically detect the serial / COM port and upload new firmware.
-
-![upload](images/upload_button.png)
-
-If upload hangs or fails, try disconnecting the USB and putting the board in boot loader mode again.
-
-Once sucessfully uploaded, you can disconnect the USB cable.
+To upload the firmware, follow the 'Update firmware' section above.
 
 ## Dependencies
- * [Adafruit Zero I2S](https://www.arduino.cc/reference/en/libraries/adafruit-zero-i2s-library/)
+ - Adafruit Zero I2S
+ - RTCZero
+ - Adafruit TinyUSB Library
+ - ArduinoJson
+ - FlashStorage
 
 # Board Design
 ![Board Layout](board/board_layout_v1.png)

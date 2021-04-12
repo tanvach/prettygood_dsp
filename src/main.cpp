@@ -26,11 +26,14 @@
 
 #include <Arduino.h>
 #include <Adafruit_ZeroI2S.h>
-#include "control_sgtl5000.h"
 #include <RTCZero.h>
+#include <Adafruit_TinyUSB.h>
+#include "control_sgtl5000.h"
+#include "config.h"
 
 // Pins
 #define LED_PIN 12
+#define USER_BUTTON_PIN 13
 #define I2S_RX_PIN 17
 #define I2S_TX_PIN PIN_I2S_SD
 
@@ -42,6 +45,14 @@ Adafruit_ZeroI2S i2s = Adafruit_ZeroI2S(PIN_I2S_FS, PIN_I2S_SCK, I2S_RX_PIN, I2S
 
 // Stand by and alarms
 RTCZero rtc;
+
+// USB WebUSB object
+Adafruit_USBD_WebUSB usb_web;
+WEBUSB_URL_DEF(landingPage, 1 /*https*/, "adafruit.github.io/Adafruit_TinyUSB_Arduino/examples/webusb-serial/index.html");
+
+// Shared variables
+volatile boolean active = true;
+volatile boolean user_button_pushed = false;
 
 void SetupI2S() {
   
@@ -78,14 +89,10 @@ void SetupI2S() {
   PORT->Group[PORTA].PINCFG[10].bit.PMUXEN = 0;
   PORT->Group[PORTA].PINCFG[11].bit.PMUXEN = 0;
 
-  // Configure the regulator to run in normal mode when in standby mode
-  // Otherwise it defaults to low power mode and can only supply 50 uA
+  // Configure the regulator and clocks to run in standby mode
   SYSCTRL->VREG.bit.RUNSTDBY = 1;
-
-  // Run 8MHz oscillator in deep sleep
+  SYSCTRL->DFLLCTRL.bit.RUNSTDBY = 1;
   SYSCTRL->OSC8M.bit.RUNSTDBY = 1;
-
-  // Run generic clock in deep sleep
   GCLK->GENCTRL.bit.RUNSTDBY = 1;
 
   // Enable I2S to receive mode
@@ -99,65 +106,164 @@ void SetupSGTL5000() {
   audioShield.muteHeadphone();
   audioShield.inputSelect(AUDIO_INPUT_LINEIN);
 
-  // Usage: audioShield.enhanceBass((float)lr_level,(float)bass_level,(uint8_t)hpf_bypass,(uint8_t)cutoff);
-  // Please see http://www.pjrc.com/teensy/SGTL5000.pdf page 50 for valid values for BYPASS_HPF and CUTOFF
-  // 1: Pass through most of LR channel
-  // 140: somewhat aggressive bass boost. Usable range ~ 100 - 160. Lower is more bass
-  // 0: enable high pass filter
-  // 4: Cutoff freq ~175Hz
-  // Disabled since it reduces sound staging
-  // audioShield.enhanceBass((float)0.7,(float)0.3,(uint8_t)0,(uint8_t)4);
-  // audioShield.enhanceBassEnable();
+  // Psycho-acoutic bass boost
+  bool bass_enhance = config_doc["enhance_bass"];
+  if (bass_enhance) {
+    float lr_vol = config_doc["enhance_bass_lr_vol"];
+    float bass_vol = config_doc["enhance_bass_bass_vol"];
+    uint8_t high_pass = config_doc["enhance_bass_high_pass"];
+    uint8_t cutoff = config_doc["enhance_bass_cutoff"];
 
-  // Parametric EQ based on AutoEQ output
-  audioShield.eqSelect(1);
-  audioShield.eqFilterCount(7);
+    audioShield.enhanceBassEnable();
+    audioShield.enhanceBass(lr_vol, bass_vol, high_pass, cutoff);
+  }
 
-  int updateFilter[5];
-  
-  // Usage: calcBiquad(filtertype, fC, dB_Gain, Q, quantization_unit, fS, *coef)
-  // quantization_unit is fixed at 524288 for SGTL5000
-  calcBiquad(FILTER_PARAEQ, 59, 6.6, 0.17, 524288, SAMPLERATE_HZ, updateFilter);
-  audioShield.eqFilter(0,updateFilter);
-  calcBiquad(FILTER_PARAEQ, 243, -6.4, 1.71, 524288, SAMPLERATE_HZ, updateFilter);
-  audioShield.eqFilter(1,updateFilter);
-  calcBiquad(FILTER_PARAEQ, 811, 2.2, 1.90, 524288, SAMPLERATE_HZ, updateFilter);
-  audioShield.eqFilter(2,updateFilter);
-  calcBiquad(FILTER_PARAEQ, 1189, 3.3, 2.45, 524288, SAMPLERATE_HZ, updateFilter);
-  audioShield.eqFilter(3,updateFilter);
-  calcBiquad(FILTER_PARAEQ, 1645, -7.2, 0.64, 524288, SAMPLERATE_HZ, updateFilter);
-  audioShield.eqFilter(4,updateFilter);
-  calcBiquad(FILTER_PARAEQ, 6243, 1.4, 0.30, 524288, SAMPLERATE_HZ, updateFilter);
-  audioShield.eqFilter(5,updateFilter);
-  calcBiquad(FILTER_PARAEQ, 19864, -7.8, 0.38, 524288, SAMPLERATE_HZ, updateFilter);
-  audioShield.eqFilter(6,updateFilter);
+  // Set up EQ filters
+  uint8_t filter_type = config_doc["filter_type"];
+  uint8_t filter_count = config_doc["filter_count"];
+  audioShield.eqSelect(filter_type);
+  audioShield.eqFilterCount(filter_count);
+
+  // Parametric EQ
+  if (filter_type == 1) {
+
+    int updateFilter[5];    
+    uint8_t filter_count = config_doc["filter_count"];
+
+    for (uint8_t i = 0; i < filter_count; i++) {
+      // Usage: calcBiquad(filtertype, fC, dB_Gain, Q, quantization_unit, fS, *coef)
+      // quantization_unit is fixed at 524288 for SGTL5000
+      float filter_fc = config_doc["filter_fc"][i];
+      float filter_db = config_doc["filter_db"][i];
+      float filter_q = config_doc["filter_q"][i];
+      // Serial.print("Biquad filter ");
+      // Serial.print(i);
+      // Serial.print(" with fc:");
+      // Serial.print(filter_fc);
+      // Serial.print(" gain:");
+      // Serial.print(filter_db);
+      // Serial.print(" q:");
+      // Serial.print(filter_q);
+      // Serial.println();
+
+      calcBiquad(
+        FILTER_PARAEQ, 
+        filter_fc, 
+        filter_db, 
+        filter_q, 
+        524288, 
+        SAMPLERATE_HZ, 
+        updateFilter
+      );
+      audioShield.eqFilter(0,updateFilter);
+    }
+  }
 
   // High pass filter adds noise for some reason. We don't need it.
   audioShield.adcHighPassFilterDisable();
 
   // Enable output
-  audioShield.volume(0.7);
+  audioShield.volume(config_doc["volume"]);
   audioShield.unmuteHeadphone();
 }
 
+// Call backs
+void isr() {
+  // digitalWrite(LED_PIN, HIGH);
+  user_button_pushed = true;
+}
+
+void line_state_callback(bool connected)
+{
+  digitalWrite(LED_PIN, connected);
+  // Send config JSON to browser
+  if ( connected ) serializeJsonPretty(config_doc, usb_web);
+  usb_web.println();
+}
+
 // Begin usual Arduino code
+
 void setup() {
-  // Serial.begin(115200);
+  Serial.begin(115200);
+
+  // delay(2000);
+  LoadConfig();
+  serializeJsonPretty(config_doc, Serial);
+  Serial.println();
+  // delay(1000);
 
   // Set up I2S clocks
   SetupI2S();
-  delay(100);
+  delay(10);
   
   // Set up SGTL5000
   SetupSGTL5000();
-  delay(100);
 
   // Turn LED off
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
+
+  // Enable USER button (active low)
+  pinMode(USER_BUTTON_PIN, INPUT_PULLUP);
+  // attachInterrupt(USER_BUTTON_PIN, isr, CHANGE);
+
+  // Enter stand by to save power if USER button is not held down while booting
+  if (digitalRead(USER_BUTTON_PIN)) {
+    active = false;
+    rtc.standbyMode();
+  }
+
+  // Set up WebUSB for configuration
+  usb_web.setLandingPage(&landingPage);
+  usb_web.setLineStateCallback(line_state_callback);
+  usb_web.setStringDescriptor("Prettygood DSP WebUSB");
+  usb_web.begin();
+  
 }
 
 void loop() {
-  // Enter stand by to save power
-  rtc.standbyMode();
+  if (active) {
+    if (user_button_pushed) {
+      user_button_pushed = false;
+      SetupSGTL5000();
+    }
+
+    // Attempt to load JSON from WebUSB
+    if (usb_web.available()) {
+
+      DynamicJsonDocument received_doc(JSON_DOC_SIZE);
+      deserializeJson(received_doc, usb_web);
+
+      // Check that the config is valid
+      // TODO: Better check
+      if (received_doc.containsKey("volume")) {
+        config_doc = received_doc;
+        SetupSGTL5000();
+        usb_web.println("\nReceived.");
+        delay(100);
+        serializeJsonPretty(config_doc, usb_web);
+      }
+
+      // Reload defaults config
+      if (received_doc["reload_defaults"]) {
+        LoadConfig(true);
+        SetupSGTL5000();
+        usb_web.println("\nReloaded defaults.");
+        delay(100);
+        serializeJsonPretty(config_doc, usb_web);
+      }
+
+      // Save to flash 
+      if (received_doc["save_to_flash"]) {
+        SaveConfig();
+        usb_web.println("\nWritten settings to flash.");
+        delay(100);
+        serializeJsonPretty(config_doc, usb_web);
+      }
+      
+    }
+  } else {
+    // Stand by if not booted in active mode
+    rtc.standbyMode();
+  }
 }
