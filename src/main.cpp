@@ -163,7 +163,8 @@ void SetupSGTL5000() {
   audioShield.adcHighPassFilterDisable();
 
   // Enable output
-  audioShield.volume(config_doc["volume"]);
+  float volume = config_doc["volume"];
+  audioShield.volume(volume);
   audioShield.unmuteHeadphone();
 }
 
@@ -219,14 +220,11 @@ void setup() {
   usb_web.setStringDescriptor("Prettygood DSP WebUSB");
   usb_web.begin();
   
+  while(!USBDevice.mounted()) delay(1);
 }
 
 void loop() {
   if (active) {
-    if (user_button_pushed) {
-      user_button_pushed = false;
-      SetupSGTL5000();
-    }
 
     // Attempt to load JSON from WebUSB
     if (usb_web.available()) {
