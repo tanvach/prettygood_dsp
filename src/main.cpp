@@ -155,7 +155,7 @@ void SetupSGTL5000() {
         SAMPLERATE_HZ, 
         updateFilter
       );
-      audioShield.eqFilter(0,updateFilter);
+      audioShield.eqFilter(i, updateFilter);
     }
   }
 
