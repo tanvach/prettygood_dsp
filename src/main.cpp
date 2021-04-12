@@ -48,7 +48,7 @@ RTCZero rtc;
 
 // USB WebUSB object
 Adafruit_USBD_WebUSB usb_web;
-WEBUSB_URL_DEF(landingPage, 1 /*https*/, "adafruit.github.io/Adafruit_TinyUSB_Arduino/examples/webusb-serial/index.html");
+WEBUSB_URL_DEF(landingPage, 1 /*https*/, "tanvach.github.io/prettygood_dsp/index.html");
 
 // Shared variables
 volatile boolean active = true;

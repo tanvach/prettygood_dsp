@@ -48,9 +48,12 @@ To enter and use the WebUSB mode:
 - Open a recent version of Chrome.
 - Press *RESET* while the *USER* button is held down.
 - Chrome should recorgnize the device as 'QT Py M0'.
-- Click on the notification to go to the configuration page (or click on this link).
+- Click on the notification to go to the configuration page (or go to https://tanvach.github.io/prettygood_dsp/).
+- Click 'Connect' to pair and connect to the board.
 
 ![chrome notification](images/chrome_notification.png)
+
+![webusb configurator](images/webusb_configurator.png)
 
 # Update firmware
 The board firmare is updatable via USB.
