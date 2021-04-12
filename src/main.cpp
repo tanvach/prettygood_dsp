@@ -107,13 +107,11 @@ void SetupSGTL5000() {
   audioShield.inputSelect(AUDIO_INPUT_LINEIN);
 
   // Psycho-acoutic bass boost
-  bool bass_enhance = config_doc["enhance_bass"];
-  if (bass_enhance) {
+  if (config_doc["enhance_bass"]) {
     float lr_vol = config_doc["enhance_bass_lr_vol"];
     float bass_vol = config_doc["enhance_bass_bass_vol"];
     uint8_t high_pass = config_doc["enhance_bass_high_pass"];
     uint8_t cutoff = config_doc["enhance_bass_cutoff"];
-
     audioShield.enhanceBassEnable();
     audioShield.enhanceBass(lr_vol, bass_vol, high_pass, cutoff);
   }
@@ -128,7 +126,6 @@ void SetupSGTL5000() {
   if (filter_type == 1) {
 
     int updateFilter[5];    
-    uint8_t filter_count = config_doc["filter_count"];
 
     for (uint8_t i = 0; i < filter_count; i++) {
       // Usage: calcBiquad(filtertype, fC, dB_Gain, Q, quantization_unit, fS, *coef)
@@ -212,6 +209,7 @@ void setup() {
   if (digitalRead(USER_BUTTON_PIN)) {
     active = false;
     rtc.standbyMode();
+    return;
   }
 
   // Set up WebUSB for configuration
@@ -224,9 +222,10 @@ void setup() {
 }
 
 void loop() {
+
   if (active) {
 
-    // Attempt to load JSON from WebUSB
+    // WebUSB
     if (usb_web.available()) {
 
       DynamicJsonDocument received_doc(JSON_DOC_SIZE);
@@ -260,8 +259,9 @@ void loop() {
       }
       
     }
-  } else {
-    // Stand by if not booted in active mode
-    rtc.standbyMode();
+    return;
   }
+  
+  // Stand by if not booted in active mode
+  rtc.standbyMode();
 }

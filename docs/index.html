@@ -11,6 +11,14 @@
       <h1>Prettygood DSP - WebUSB Configurator (Experimental)</h1>
       <p>Receiver JSON contains the current DSP settings. Try copy and paste the JSON in Sender and press enter. The DSP setting will update immediately. Press 'Save to flash' to save the setting permanently.</p>
       <p>This tool is *experimental* - there are little checks, so invalid values may affect the DSP in unexpected ways. Reflash or updating the firmware will reset values to the built-in defaults.</p>
+      <p>
+        volume: headphone volume (0.0-1.0)</br>
+        filter_count: number of filters to use (0-7)</br>
+        filter_fc: center frequency in Hz (max 22000)</br>
+        filter_db: gain in db</br>
+        filter_q: q factor</br>
+        enhance_bass: turn on / off psycho acoustic bass boost</br>
+      </p>
       <div class="connect-container">
         <button id="connect" class="button black">Connect</button>
         <span id="status"></span>
