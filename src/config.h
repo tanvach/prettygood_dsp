@@ -55,7 +55,7 @@ void LoadConfig(boolean reload_defaults = false) {
     DynamicJsonDocument new_config_doc(JSON_DOC_SIZE);
 
     // Default values
-    new_config_doc["volume"] = 0.75;
+    new_config_doc["volume"] = 0.7;
 
     // EQ Settings
     new_config_doc["filter_type"]  = 1; // 1 = Parametric EQ
@@ -76,7 +76,7 @@ void LoadConfig(boolean reload_defaults = false) {
     new_config_doc["filter_db"][4] = -7.2;
     new_config_doc["filter_q"][4]  = 0.64;
     new_config_doc["filter_fc"][5] = 6243;
-    new_config_doc["filter_db"][5] = 1.4;
+    new_config_doc["filter_db"][5] = -1.4;
     new_config_doc["filter_q"][5]  = 0.30;
     new_config_doc["filter_fc"][6] = 19864;
     new_config_doc["filter_db"][6] = -7.8;
