@@ -101,8 +101,6 @@ void SetupI2S() {
 
 void SetupSGTL5000() {
 
-  // Enable as Master, input clock 8Mhz
-  audioShield.enable(8000000);
   audioShield.muteHeadphone();
   audioShield.inputSelect(AUDIO_INPUT_LINEIN);
 
@@ -171,12 +169,17 @@ void isr() {
   user_button_pushed = true;
 }
 
+void sendConfigJSON() {
+  serializeJsonPretty(config_doc, usb_web);
+  usb_web.println("\n");
+  usb_web.println("<<EOF>>");
+}
+
 void line_state_callback(bool connected)
 {
   digitalWrite(LED_PIN, connected);
   // Send config JSON to browser
-  if ( connected ) serializeJsonPretty(config_doc, usb_web);
-  usb_web.println();
+  if ( connected ) sendConfigJSON();
 }
 
 // Begin usual Arduino code
@@ -193,7 +196,9 @@ void setup() {
   // Set up I2S clocks
   SetupI2S();
   delay(10);
-  
+
+  // Enable as Master, input clock 8Mhz
+  audioShield.enable(8000000);
   // Set up SGTL5000
   SetupSGTL5000();
 
@@ -236,26 +241,20 @@ void loop() {
       if (received_doc.containsKey("volume")) {
         config_doc = received_doc;
         SetupSGTL5000();
-        usb_web.println("\nReceived.");
-        delay(100);
-        serializeJsonPretty(config_doc, usb_web);
+        sendConfigJSON();
       }
 
       // Reload defaults config
       if (received_doc["reload_defaults"]) {
         LoadConfig(true);
         SetupSGTL5000();
-        usb_web.println("\nReloaded defaults.");
-        delay(100);
-        serializeJsonPretty(config_doc, usb_web);
+        sendConfigJSON();
       }
 
       // Save to flash 
       if (received_doc["save_to_flash"]) {
         SaveConfig();
-        usb_web.println("\nWritten settings to flash.");
-        delay(100);
-        serializeJsonPretty(config_doc, usb_web);
+        sendConfigJSON();
       }
       
     }
