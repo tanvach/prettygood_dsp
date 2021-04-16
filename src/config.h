@@ -61,7 +61,7 @@ void LoadConfig(boolean reload_defaults = false) {
     new_config_doc["filter_type"]  = 1; // 1 = Parametric EQ
     new_config_doc["filter_count"] = 7;
     new_config_doc["filter_fc"][0] = 59;
-    new_config_doc["filter_db"][0] = 6.6;
+    new_config_doc["filter_db"][0] = 4.6;
     new_config_doc["filter_q"][0]  = 0.17;
     new_config_doc["filter_fc"][1] = 243;
     new_config_doc["filter_db"][1] = -6.4;
@@ -93,9 +93,12 @@ void LoadConfig(boolean reload_defaults = false) {
 }
 
 void SaveConfig() {
-    // Serialize and write to flash
-    MSGPACK msgpack;
-    serializeMsgPack(config_doc, msgpack.msgpack);
-    msgpack.signature = WRITTEN_SIGNATURE;
-    msgpack_flash_store.write(msgpack);
+    // Check that the config is valid
+    if ((config_doc["volume"] >= 0.0) & (config_doc["volume"] <= 1.0)) {
+        // Serialize and write to flash
+        MSGPACK msgpack;
+        serializeMsgPack(config_doc, msgpack.msgpack);
+        msgpack.signature = WRITTEN_SIGNATURE;
+        msgpack_flash_store.write(msgpack);
+    }
 }

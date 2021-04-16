@@ -173,6 +173,7 @@ void sendConfigJSON() {
   serializeJsonPretty(config_doc, usb_web);
   usb_web.println("\n");
   usb_web.println("<<EOF>>");
+  delay(100);
 }
 
 void line_state_callback(bool connected)
@@ -238,7 +239,7 @@ void loop() {
 
       // Check that the config is valid
       // TODO: Better check
-      if (received_doc.containsKey("volume")) {
+      if ((received_doc["volume"] >= 0.0) & (received_doc["volume"] <= 1.0)) {
         config_doc = received_doc;
         SetupSGTL5000();
         sendConfigJSON();

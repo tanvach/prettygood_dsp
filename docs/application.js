@@ -9,7 +9,7 @@
     var live_update = false;
 
     var config_dict = JSON.parse(
-        '{"volume": 0.7, "filter_type": 1, "filter_count": 7, "filter_fc": [ 1000, 1000, 1000, 1000, 1000, 1000,1000 ], "filter_db": [ 0, 0, 0, 0, 0, 0, 0 ], "filter_q": [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ], "enhance_bass": false, "enhance_bass_lr_vol": 1, "enhance_bass_bass_vol": 0.3, "enhance_bass_high_pass": 0, "enhance_bass_cutoff": 4 }'
+        '{"volume": 0.7, "filter_type": 1, "filter_count": 7, "filter_fc": [ 1000, 1000, 1000, 1000, 1000, 1000, 1000 ], "filter_db": [ 0, 0, 0, 0, 0, 0, 0 ], "filter_q": [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ], "enhance_bass": false, "enhance_bass_lr_vol": 1, "enhance_bass_bass_vol": 0.3, "enhance_bass_high_pass": 0, "enhance_bass_cutoff": 4 }'
     );
 
     var canvas;
@@ -166,7 +166,7 @@
         filter.frequency.value = cutoff;
         config_dict.filter_fc[i] = parseFloat(cutoff);
         drawCurve();
-        
+
     }
 
     function resonanceHandler(event, ui, i) {
@@ -246,8 +246,13 @@
         if (receiver_lines) {
             receiver_lines.innerHTML = receiver_lines.innerHTML + text + '</br>';
         }
-        config_dict = JSON.parse(text);
-        processConfigDict();
+        try {
+            var received_dict = JSON.parse(text);
+            config_dict = received_dict;
+            processConfigDict();
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     function processConfigDict() {
@@ -260,7 +265,7 @@
             configureFilterSliders(filter_count);
             configureSlider("volume", 0, config_dict.volume, 0, 0.8, volumeHandler);
         }
-    } 
+    }
 
 
     function initAudio() {
@@ -285,24 +290,23 @@
                 connectButton.textContent = 'Disconnect';
 
                 // Override function
-                sendJson = function(text) {
+                sendJson = function (text) {
                     port.send(new TextEncoder('utf-8').encode(''));
                     port.send(new TextEncoder('utf-8').encode(text));
                 }
-                
-                var text_output = '';
+
+                var text_buffer = '';
 
                 port.onReceive = data => {
-                    let textDecoder = new TextDecoder();
-                    let text = textDecoder.decode(data);
-                    if (text.includes('<<EOF>>')) {
-                        var text_split = text.split('<<EOF>>');
-                        text_output = text_output + text_split[0];
-                        console.log(text_output);
-                        processReceivedText(text_output);
-                        text_output = text_split[1] || '';
-                    } else {
-                        text_output = text_output + text;
+                    var textDecoder = new TextDecoder();
+                    var text = textDecoder.decode(data);
+                    console.log(text);
+                    text_buffer = text_buffer + text;
+                    if (text_buffer.includes('<<EOF>>')) {
+                        var text_split = text_buffer.split('<<EOF>>');
+                        console.log(text_split);
+                        processReceivedText(text_split[0]);
+                        text_buffer = text_split[1] || '';
                     }
                 };
                 port.onReceiveError = error => {
@@ -353,7 +357,7 @@
     }
 
     // Empty if not connected
-    function sendJson() {}
+    function sendJson() { }
 
     function init() {
         initAudio();
