@@ -76,18 +76,27 @@ void LoadConfig(boolean reload_defaults = false) {
     new_config_doc["filter_db"][4] = -7.2;
     new_config_doc["filter_q"][4]  = 0.64;
     new_config_doc["filter_fc"][5] = 6243;
-    new_config_doc["filter_db"][5] = -1.4;
+    new_config_doc["filter_db"][5] = -2.4;
     new_config_doc["filter_q"][5]  = 0.30;
     new_config_doc["filter_fc"][6] = 19864;
     new_config_doc["filter_db"][6] = -7.8;
     new_config_doc["filter_q"][6]  = 0.38;
 
     // Enhance bass (Psycho-acoustic bass)
-    new_config_doc["enhance_bass"] = false;
+    new_config_doc["enhance_bass"] = true;
     new_config_doc["enhance_bass_lr_vol"] = 1.0;
-    new_config_doc["enhance_bass_bass_vol"] = 0.3;
+    new_config_doc["enhance_bass_bass_vol"] = 0.25;
     new_config_doc["enhance_bass_high_pass"] = 0;
-    new_config_doc["enhance_bass_cutoff"] = 4;
+    new_config_doc["enhance_bass_cutoff"] = 1;
+
+    // Auto volume
+    new_config_doc["auto_volume"] = true;
+    new_config_doc["auto_volume_max_gain"] = 0;
+    new_config_doc["auto_volume_lbi_response"] = 0;
+    new_config_doc["auto_volume_hard_limit"] = 0;
+    new_config_doc["auto_volume_threshold"] = -18;
+    new_config_doc["auto_volume_attack"] = 16;
+    new_config_doc["auto_volume_decay"] = 2;
 
     config_doc = new_config_doc;
 }

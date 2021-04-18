@@ -11,6 +11,7 @@
         "unordered_map": "cpp",
         "vector": "cpp",
         "istream": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "cmath": "cpp"
     }
 }

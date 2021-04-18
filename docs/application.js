@@ -8,9 +8,29 @@
     var filters = [];
     var live_update = false;
 
-    var config_dict = JSON.parse(
-        '{"volume": 0.7, "filter_type": 1, "filter_count": 7, "filter_fc": [ 1000, 1000, 1000, 1000, 1000, 1000, 1000 ], "filter_db": [ 0, 0, 0, 0, 0, 0, 0 ], "filter_q": [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ], "enhance_bass": false, "enhance_bass_lr_vol": 1, "enhance_bass_bass_vol": 0.3, "enhance_bass_high_pass": 0, "enhance_bass_cutoff": 4 }'
-    );
+    // Default when there's no USB connection
+    var config_dict = JSON.parse(`
+        {
+            "volume": 0.7,
+            "filter_type": 1,
+            "filter_count": 7,
+            "filter_fc": [ 1000, 1000, 1000, 1000, 1000, 1000, 1000 ],
+            "filter_db": [ 0, 0, 0, 0, 0, 0, 0 ],
+            "filter_q": [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ],
+            "enhance_bass": false,
+            "enhance_bass_lr_vol": 1,
+            "enhance_bass_bass_vol": 0.3,
+            "enhance_bass_high_pass": 0,
+            "enhance_bass_cutoff": 4,
+            "auto_volume": true,
+            "auto_volume_max_gain": 0,
+            "auto_volume_lbi_response": 0,
+            "auto_volume_hard_limit": 0,
+            "auto_volume_threshold": -18,
+            "auto_volume_attack": 18,
+            "auto_volume_decay": 10
+        }
+    `);
 
     var canvas;
     var canvasContext;
@@ -22,6 +42,7 @@
     var textColor = "rgb(81,127,207)";
 
     var dbScale = 14;
+    var noctaves = 9;
     var pixelsPerDb;
     var width;
     var height;
@@ -67,8 +88,6 @@
         canvasContext.moveTo(0, 0);
 
         pixelsPerDb = (0.5 * height) / dbScale;
-
-        var noctaves = 9;
 
         var frequencyHz = new Float32Array(width);
         var nyquist = 0.5 * context.sampleRate;
@@ -154,7 +173,8 @@
         }
     }
 
-    function frequencyHandler(event, ui, i) {
+    // Sliders
+    function frequencyHandler(event, type, ui, i) {
         var value = ui.value;
         var nyquist = context.sampleRate * 0.5;
         var noctaves = Math.log(nyquist / 10.0) / Math.LN2;
@@ -169,7 +189,7 @@
 
     }
 
-    function resonanceHandler(event, ui, i) {
+    function resonanceHandler(event, type, ui, i) {
         var value = Math.floor(ui.value * 100) / 100;
         var info = document.getElementById(ui.id + '-value');
         info.innerHTML = "Q = " + value + " dB";
@@ -179,7 +199,7 @@
         drawCurve();
     }
 
-    function gainHandler(event, ui, i) {
+    function gainHandler(event, type, ui, i) {
         var value = Math.floor(ui.value * 100) / 100;
         var info = document.getElementById(ui.id + '-value');
         info.innerHTML = "gain = " + value;
@@ -189,11 +209,11 @@
         drawCurve();
     }
 
-    function volumeHandler(event, ui, i) {
+    function sliderHandler(event, type, ui, i) {
         var value = Math.floor(ui.value * 100) / 100;
         var info = document.getElementById(ui.id + '-value');
         info.innerHTML = value;
-        config_dict.volume = parseFloat(value);
+        config_dict[type] = parseFloat(value);
         drawCurve();
     }
 
@@ -237,8 +257,54 @@
         slider.min = min;
         slider.max = max;
         slider.value = value;
-        handler(0, slider, i);
-        slider.oninput = function () { handler(0, slider, i); };
+        handler(0, type, slider, i);
+        slider.oninput = function () { handler(0, type, slider, i); };
+    }
+
+    // Check boxes
+    function checkboxHandler(event, type, ui) {
+        var value = ui.checked;
+        config_dict[type] = value;
+    }
+
+    function configureCheckbox(type, value, handler) {
+        var checkbox = document.getElementById(type + "Checkbox");
+        checkbox.checked = value;
+        handler(0, type, checkbox);
+        checkbox.oninput = function () { handler(0, type, checkbox); };
+    }
+
+    // Selectors
+    function selectorHandler(event, type, ui) {
+        var value = ui.value;
+        config_dict[type] = parseInt(value);
+        drawCurve();
+    }
+
+    function configureSelector(type, value, handler) {
+        var selector = document.getElementById(type + "Selector");
+        selector.value = value;
+        handler(0, type, selector);
+        selector.oninput = function () { handler(0, type, selector); };
+    }
+
+    function configUIElements() {
+        configureFilterSliders(filter_count);
+        configureSlider("volume", 0, config_dict.volume, 0, 0.8, sliderHandler);
+
+        configureCheckbox("enhance_bass", config_dict.enhance_bass, checkboxHandler);
+        configureSelector("enhance_bass_cutoff", config_dict.enhance_bass_cutoff, selectorHandler);
+        configureSelector("enhance_bass_high_pass", config_dict.enhance_bass_high_pass, selectorHandler);
+        configureSlider("enhance_bass_lr_vol", 0, config_dict.enhance_bass_lr_vol, 0, 1, sliderHandler);
+        configureSlider("enhance_bass_bass_vol", 0, config_dict.enhance_bass_bass_vol, 0, 1, sliderHandler);
+
+        configureCheckbox("auto_volume", config_dict.auto_volume, checkboxHandler);
+        configureSelector("auto_volume_max_gain", config_dict.auto_volume_max_gain, selectorHandler);
+        configureSelector("auto_volume_lbi_response", config_dict.auto_volume_lbi_response, selectorHandler);
+        configureSelector("auto_volume_hard_limit", config_dict.auto_volume_hard_limit, selectorHandler);
+        configureSlider("auto_volume_threshold", 0, config_dict.auto_volume_threshold, -96, 0, sliderHandler);
+        configureSlider("auto_volume_attack", 0, config_dict.auto_volume_attack, 0, 20, sliderHandler);
+        configureSlider("auto_volume_decay", 0, config_dict.auto_volume_decay, 0, 20, sliderHandler);
     }
 
     function processReceivedText(text) {
@@ -262,8 +328,8 @@
                 console.log('Number of filters must match with the DSP config!');
                 return;
             }
-            configureFilterSliders(filter_count);
-            configureSlider("volume", 0, config_dict.volume, 0, 0.8, volumeHandler);
+            // Reload UI element states
+            configUIElements();
         }
     }
 
@@ -369,8 +435,7 @@
         canvasHeight = parseFloat(window.getComputedStyle(canvas, null).height);
 
         addFitlerSliders(filter_count);
-        configureFilterSliders(filter_count);
-        configureSlider("volume", 0, config_dict.volume, 0, 0.8, volumeHandler);
+        configUIElements();
 
         drawCurve();
     }

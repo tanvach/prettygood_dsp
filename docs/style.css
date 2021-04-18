@@ -120,7 +120,7 @@ input[type='range']::-webkit-slider-thumb {
   height: 16px;
   border-radius: 16px;
 }
-
+/* 
 input[type="checkbox"] {
   display: none;
 }
@@ -137,7 +137,7 @@ input[type="checkbox"]+label span {
 
 input[type="checkbox"]:checked+label span {
   background: url(/static/images/check_radio_sheet.png) -19px top no-repeat;
-}
+} */
 
 blockquote {
   font-style: italic;

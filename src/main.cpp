@@ -103,6 +103,8 @@ void SetupSGTL5000() {
 
   audioShield.muteHeadphone();
   audioShield.inputSelect(AUDIO_INPUT_LINEIN);
+  audioShield.enhanceBassDisable();
+  audioShield.autoVolumeDisable();
 
   // Psycho-acoutic bass boost
   if (config_doc["enhance_bass"]) {
@@ -112,6 +114,18 @@ void SetupSGTL5000() {
     uint8_t cutoff = config_doc["enhance_bass_cutoff"];
     audioShield.enhanceBassEnable();
     audioShield.enhanceBass(lr_vol, bass_vol, high_pass, cutoff);
+  }
+
+    // Auto volume
+  if (config_doc["auto_volume"]) {
+    uint8_t maxGain = config_doc["auto_volume_max_gain"];
+    uint8_t lbiResponse = config_doc["auto_volume_lbi_response"];
+    uint8_t hardLimit = config_doc["auto_volume_hard_limit"];
+    float threshold = config_doc["auto_volume_threshold"];
+    float attack = config_doc["auto_volume_attack"];
+    float decay = config_doc["auto_volume_decay"];
+    audioShield.autoVolumeEnable();
+    audioShield.autoVolumeControl(maxGain, lbiResponse, hardLimit, threshold, attack, decay);
   }
 
   // Set up EQ filters

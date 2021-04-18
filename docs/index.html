@@ -22,7 +22,8 @@
 
     <div id="header">
       <h1>Prettygood DSP Configurator [BETA]</h1>
-      <p>This tool is in development. If your board stops responding, reset the board with the RESET switch and try connecting again.</p>
+      <p>This tool is in development. If your board stops responding, reset the board with the RESET switch and try
+        connecting again.</p>
       <p>*Reflashing or updating the firmware will reset values to the built-in defaults*</p>
     </div>
 
@@ -39,10 +40,11 @@
 
         <div class="post">
 
-          <h2>Settings</h2>
+          <h2>Volume Settings</h2>
           <p>Output headphone volume. Limiting ouput volume to 0.8 due to distortions at high volume.</p>
-          <div style="display: flex;"> Volume
+          <div style="display: flex;">
             <div>
+              <label for="volume0Slider">Volume</label>
               <input id="volume0Slider" type="range" min="0" max="0.8" step="0.01" value="0"
                 style="height: 10px; width: 200px;">
               <span id="volume0Slider-value">0.75</span>
@@ -56,7 +58,7 @@
           </p>
 
           <p>
-            <canvas id="canvasID" width="512" height="250" style="float: left;"></canvas>
+            <canvas id="canvasID" width="1000" height="250" style="float: left;"></canvas>
           </p>
 
           <p><br><br></p>
@@ -68,17 +70,119 @@
             <div></div>
           </div>
 
+          <h2>Psycho-acoustic Bass Enhancer</h2>
+          <p>Enhances bass by mixing a mono, low-pass filtered copy of the original stereo signal, back into the stereo
+            signal, which is then optionally high pass filtered (to
+            remove inaudible subsonic frequencies).</p>
+          <div style="display: inline-block;">
+            <div>
+              <label for="enhance_bassCheckbox">Enable PA Bass Enhancer</label>
+              <input id="enhance_bassCheckbox" type="checkbox" value="">
+              <label for="enhance_bass_cutoffSelector">Cut Off Frequency:</label>
+              <select id="enhance_bass_cutoffSelector">
+                <option value="0">80Hz</option>
+                <option value="1">100Hz</option>
+                <option value="2">125Hz</option>
+                <option value="3">150Hz</option>
+                <option value="4">175Hz</option>
+                <option value="5">200Hz</option>
+                <option value="6">225Hz</option>
+              </select>
+              <label for="enhance_bass_high_passSelector">High pass filter:</label>
+              <select id="enhance_bass_high_passSelector">
+                <option value="0">Enable</option>
+                <option value="1">Bypass/Disable</option>
+              </select>
+            </div>
+            <div>
+              <label for="enhance_bass_lr_vol0Slider">Original Signal Volume</label>
+              <input id="enhance_bass_lr_vol0Slider" type="range" min="0" max="1" step="0.01" value="0"
+                style="height: 10px; width: 200px;">
+              <span id="enhance_bass_lr_vol0Slider-value">0</span>
+            </div>
+            <div>
+              <label for="enhance_bass_bass_vol0Slider">Bass Volume</label>
+              <input id="enhance_bass_bass_vol0Slider" type="range" min="0" max="1" step="0.01" value="0"
+                style="height: 10px; width: 200px;">
+              <span id="enhance_bass_bass_vol0Slider-value">0</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Uncomment here to debug -->
-        <!-- <div class="receiver">
-          <div class="lines-header">Receiver</div>
-          <div class="lines-body">
-            <div id="receiver_lines" class="lines"></div>
+        <h2>Auto Volume</h2>
+        <p>Compressor/expander to help reduce clipping with sudden loud noises.</p>
+        <div style="display: inline-block;">
+          <div>
+            <label for="auto_volumeCheckbox">Enable Auto Volume</label>
+            <input id="auto_volumeCheckbox" type="checkbox" value="">
+            <label for="auto_volume_max_gainSelector">Max Gain:</label>
+            <select id="auto_volume_max_gainSelector">
+              <option value="0">0 dB</option>
+              <option value="1">6 dB</option>
+              <option value="2">12 dB</option>
+            </select>
+            <label for="auto_volume_lbi_responseSelector">Response time:</label>
+            <select id="auto_volume_lbi_responseSelector">
+              <option value="0">0 ms</option>
+              <option value="1">25 ms</option>
+              <option value="2">50 ms</option>
+              <option value="3">100 ms</option>
+            </select>
+            <label for="auto_volume_hard_limitSelector">Type:</label>
+            <select id="auto_volume_hard_limitSelector">
+              <option value="0">Soft knee</option>
+              <option value="1">Hard limit</option>
+            </select>
           </div>
-        </div> -->
-
+          <div>
+            <label for="auto_volume_threshold0Slider">Threshold (dBFS)</label>
+            <input id="auto_volume_threshold0Slider" type="range" min="0" max="10" step="0.01" value="0"
+              style="height: 10px; width: 200px;">
+            <span id="auto_volume_threshold0Slider-value">0</span>
+          </div>
+          <div>
+            <label for="auto_volume_attack0Slider">Attack (dB/s)</label>
+            <input id="auto_volume_attack0Slider" type="range" min="0" max="10" step="0.01" value="0"
+              style="height: 10px; width: 200px;">
+            <span id="auto_volume_attack0Slider-value">0</span>
+          </div>
+          <div>
+            <label for="auto_volume_decay0Slider">Decay (dB/s)</label>
+            <input id="auto_volume_decay0Slider" type="range" min="0" max="10" step="0.01" value="0"
+              style="height: 10px; width: 200px;">
+            <span id="auto_volume_decay0Slider-value">0</span>
+          </div>
+          <ul>
+            <li>Max Gain is the maximum gain that can be applied for expanding.</li>
+            <li>Response controls the integration time for the compressor. Larger values average the volume over a
+              longer time, allowing short-term peaks through.</li>
+            <li>&#39;Soft knee&#39; compressor is used to progressively compress louder values which are near to or
+              above the threshold (the louder they are, the greater the compression).</li>
+            <li>&#39;Hard limit&#39; compressor decrease all values above the threshold to the same loudness.</li>
+            <li>Threshold is specified as a range between -96dBFS to 0dBFS (dB relative to full scale), where -18dBFS
+              is a typical value.</li>
+            <li>Attack is the rate of decrease in gain when the signal is over threshold. Too high of an attack causes
+              an unnatural sound as the input signal may be
+              distorted. Too low of an attack may cause saturation of the
+              output as the incoming signal is not compressed quickly
+              enough.</li>
+            <li>Decay controls how fast gain is restored once the level drops below threshold. It is typically set to
+              a longer value than attack. It is desirable to use very slow
+              decay rate to avoid any distortion in the signal and prevent
+              the AVC from entering a continuous attack-decay loop.</li>
+          </ul>
+        </div>
       </div>
+
+      <!-- Uncomment to debug -->
+      <!-- <div class="receiver">
+        <div class="lines-header">Receiver</div>
+        <div class="lines-body">
+          <div id="receiver_lines" class="lines"></div>
+        </div>
+      </div> -->
+
+    </div>
 </body>
 
 </html>
