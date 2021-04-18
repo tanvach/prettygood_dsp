@@ -11,24 +11,24 @@
     // Default when there's no USB connection
     var config_dict = JSON.parse(`
         {
-            "volume": 0.7,
+            "volume": 0,
             "filter_type": 1,
             "filter_count": 7,
             "filter_fc": [ 1000, 1000, 1000, 1000, 1000, 1000, 1000 ],
             "filter_db": [ 0, 0, 0, 0, 0, 0, 0 ],
             "filter_q": [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ],
             "enhance_bass": false,
-            "enhance_bass_lr_vol": 1,
-            "enhance_bass_bass_vol": 0.3,
-            "enhance_bass_high_pass": 0,
-            "enhance_bass_cutoff": 4,
-            "auto_volume": true,
+            "enhance_bass_lr_vol": 0,
+            "enhance_bass_bass_vol": 0,
+            "enhance_bass_high_pass": 1,
+            "enhance_bass_cutoff": 1,
+            "auto_volume": false,
             "auto_volume_max_gain": 0,
             "auto_volume_lbi_response": 0,
             "auto_volume_hard_limit": 0,
-            "auto_volume_threshold": -18,
-            "auto_volume_attack": 18,
-            "auto_volume_decay": 10
+            "auto_volume_threshold": 0,
+            "auto_volume_attack": 0,
+            "auto_volume_decay": 0
         }
     `);
 
