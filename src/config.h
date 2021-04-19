@@ -98,6 +98,12 @@ void LoadConfig(boolean reload_defaults = false) {
     new_config_doc["auto_volume_attack"] = 16;
     new_config_doc["auto_volume_decay"] = 2;
 
+    // Keep USB Battery On
+    new_config_doc["keep_usb_battery_on"] = true;
+    new_config_doc["keep_usb_battery_on_pulse_period_sec"] = 30;
+    new_config_doc["keep_usb_battery_on_pulse_duration_msec"] = 100;
+    new_config_doc["keep_usb_battery_on_led"] = true;
+
     config_doc = new_config_doc;
 }
 

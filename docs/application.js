@@ -16,19 +16,7 @@
             "filter_count": 7,
             "filter_fc": [ 1000, 1000, 1000, 1000, 1000, 1000, 1000 ],
             "filter_db": [ 0, 0, 0, 0, 0, 0, 0 ],
-            "filter_q": [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ],
-            "enhance_bass": false,
-            "enhance_bass_lr_vol": 0,
-            "enhance_bass_bass_vol": 0,
-            "enhance_bass_high_pass": 1,
-            "enhance_bass_cutoff": 1,
-            "auto_volume": false,
-            "auto_volume_max_gain": 0,
-            "auto_volume_lbi_response": 0,
-            "auto_volume_hard_limit": 0,
-            "auto_volume_threshold": 0,
-            "auto_volume_attack": 0,
-            "auto_volume_decay": 0
+            "filter_q": [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ]
         }
     `);
 
@@ -69,6 +57,10 @@
             };
     })();
 
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
     function dbToY(db) {
         var y = (0.5 * height) - pixelsPerDb * db;
         return y;
@@ -305,6 +297,11 @@
         configureSlider("auto_volume_threshold", 0, config_dict.auto_volume_threshold, -96, 0, sliderHandler);
         configureSlider("auto_volume_attack", 0, config_dict.auto_volume_attack, 0, 20, sliderHandler);
         configureSlider("auto_volume_decay", 0, config_dict.auto_volume_decay, 0, 20, sliderHandler);
+        
+        configureCheckbox("keep_usb_battery_on", config_dict.keep_usb_battery_on, checkboxHandler);
+        configureCheckbox("keep_usb_battery_on_led", config_dict.keep_usb_battery_on_led, checkboxHandler);
+        configureSelector("keep_usb_battery_on_pulse_period_sec", config_dict.keep_usb_battery_on_pulse_period_sec, selectorHandler);
+        configureSelector("keep_usb_battery_on_pulse_duration_msec", config_dict.keep_usb_battery_on_pulse_duration_msec, selectorHandler);
     }
 
     function processReceivedText(text) {
@@ -417,7 +414,9 @@
             sendJson('{"reload_defaults":true}');
         });
 
-        saveflashButton.addEventListener('click', function () {
+        saveflashButton.addEventListener('click', async function () {
+            sendJson(JSON.stringify(config_dict));
+            await sleep(100);
             sendJson('{"save_to_flash":true}');
         });
     }

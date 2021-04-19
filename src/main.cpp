@@ -34,6 +34,7 @@
 // Pins
 #define LED_PIN 12
 #define USER_BUTTON_PIN 13
+#define POWER_PULSE_PIN 21
 #define I2S_RX_PIN 17
 #define I2S_TX_PIN PIN_I2S_SD
 
@@ -53,6 +54,7 @@ WEBUSB_URL_DEF(landingPage, 1 /*https*/, "tanvach.github.io/prettygood_dsp/index
 // Shared variables
 volatile boolean active = true;
 volatile boolean user_button_pushed = false;
+volatile boolean power_pulse = false;
 
 void SetupI2S() {
   
@@ -177,24 +179,65 @@ void SetupSGTL5000() {
   audioShield.unmuteHeadphone();
 }
 
-// Call backs
-void isr() {
-  // digitalWrite(LED_PIN, HIGH);
-  user_button_pushed = true;
-}
 
-void sendConfigJSON() {
+// WebUSB
+void SendConfigJSON() {
   serializeJsonPretty(config_doc, usb_web);
   usb_web.println("\n");
   usb_web.println("<<EOF>>");
   delay(100);
 }
 
+// Call backs
+void user_button_isr() {
+  user_button_pushed = true;
+}
+
 void line_state_callback(bool connected)
 {
   digitalWrite(LED_PIN, connected);
   // Send config JSON to browser
-  if ( connected ) sendConfigJSON();
+  if ( connected ) SendConfigJSON();
+}
+
+void alarm_callback() {
+  power_pulse = true;
+}
+
+// Power pulse regular alarm
+void SetAlarmThenSleep() {
+  bool keep_usb_battery_on = config_doc["keep_usb_battery_on"];
+  int total_sec = config_doc["keep_usb_battery_on_pulse_period_sec"];
+  if (keep_usb_battery_on & (total_sec > 0) & (total_sec < 3600)) {
+    uint8_t seconds = total_sec % 60;
+    uint8_t minutes = total_sec / 60;
+    rtc.setTime(0, 0, 0);
+    rtc.setDate(1, 1, 21);
+    rtc.setAlarmTime(0, minutes, seconds);
+    rtc.enableAlarm(rtc.MATCH_HHMMSS);
+    rtc.attachInterrupt(alarm_callback);
+  }
+  rtc.standbyMode();
+}
+
+bool isUSBConnected() {
+  // Detect USB connection by checking if there's a change in USB frame number
+  uint16_t f = USB->DEVICE.FNUM.bit.FNUM;
+  delay(3);
+  return f != USB->DEVICE.FNUM.bit.FNUM;
+}
+
+// Pulse USB power by wasting current
+void PowerPulse(bool state) {
+  if (state) {
+    pinMode(A0, OUTPUT);
+    analogWrite(A0, 1023);
+  } else {
+    digitalWrite(A0, LOW);
+    pinMode(A0, INPUT);
+  }
+  digitalWrite(POWER_PULSE_PIN, state);
+  if (config_doc["keep_usb_battery_on_led"]) digitalWrite(LED_PIN, state);
 }
 
 // Begin usual Arduino code
@@ -223,25 +266,53 @@ void setup() {
 
   // Enable USER button (active low)
   pinMode(USER_BUTTON_PIN, INPUT_PULLUP);
-  // attachInterrupt(USER_BUTTON_PIN, isr, CHANGE);
+  attachInterrupt(USER_BUTTON_PIN, user_button_isr, CHANGE);
 
+  // USB power pulse (v1.1 board and above only)
+  pinMode(POWER_PULSE_PIN, OUTPUT);
+  analogWriteResolution(10);
+  
   // Enter stand by to save power if USER button is not held down while booting
   if (digitalRead(USER_BUTTON_PIN)) {
     active = false;
-    rtc.standbyMode();
-    return;
+    rtc.begin();
+    // Allow USB to make connection first
+    delay(1000);
+    SetAlarmThenSleep();
+  } else {
+    // If USER button is pressed then set up WebUSB for configuration
+    active = true;
+    usb_web.setLandingPage(&landingPage);
+    usb_web.setLineStateCallback(line_state_callback);
+    usb_web.setStringDescriptor("Prettygood DSP WebUSB");
+    usb_web.begin();
+    // Allow USB to make connection first
+    delay(1000);
   }
-
-  // Set up WebUSB for configuration
-  usb_web.setLandingPage(&landingPage);
-  usb_web.setLineStateCallback(line_state_callback);
-  usb_web.setStringDescriptor("Prettygood DSP WebUSB");
-  usb_web.begin();
-  
-  while(!USBDevice.mounted()) delay(1);
 }
 
 void loop() {
+
+  // Process user button push event
+  if (user_button_pushed) {
+    // Do nothing
+    user_button_pushed = false;
+  }
+
+  // Process power pulse alarm event
+  if (power_pulse) {
+    power_pulse = false;
+    // Only pulse if not real USB connection (i.e. USB powerbank)
+    if (!isUSBConnected()) {
+      uint16_t pulse_duration_ms = config_doc["keep_usb_battery_on_pulse_duration_msec"];
+      // Max pulse = 2s
+      pulse_duration_ms = min(pulse_duration_ms, 2000);
+      // Pulse
+      PowerPulse(HIGH);
+      delay(pulse_duration_ms);
+      PowerPulse(LOW);
+    }
+  }
 
   if (active) {
 
@@ -256,26 +327,26 @@ void loop() {
       if ((received_doc["volume"] >= 0.0) & (received_doc["volume"] <= 1.0)) {
         config_doc = received_doc;
         SetupSGTL5000();
-        sendConfigJSON();
+        SendConfigJSON();
       }
 
       // Reload defaults config
       if (received_doc["reload_defaults"]) {
         LoadConfig(true);
         SetupSGTL5000();
-        sendConfigJSON();
+        SendConfigJSON();
       }
 
       // Save to flash 
       if (received_doc["save_to_flash"]) {
         SaveConfig();
-        sendConfigJSON();
+        SendConfigJSON();
       }
       
     }
-    return;
+
+  } else {
+    // Stand by if not booted in active mode
+    SetAlarmThenSleep();
   }
-  
-  // Stand by if not booted in active mode
-  rtc.standbyMode();
 }

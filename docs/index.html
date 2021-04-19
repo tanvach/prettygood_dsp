@@ -24,7 +24,8 @@
       <h1>Prettygood DSP Configurator [BETA]</h1>
       <p>This tool is in development. If your board stops responding, reset the board with the RESET switch and try
         connecting again.</p>
-      <p>*Reflashing or updating the firmware will reset values to the built-in defaults*</p>
+      <p>*Reflashing or updating the firmware will reset values to the built-in defaults* If you're seeing blank
+        options, this likely means your firmware version is too old. Please flash to the latest version.</p>
     </div>
 
     <div class="connect-container">
@@ -171,6 +172,38 @@
               decay rate to avoid any distortion in the signal and prevent
               the AVC from entering a continuous attack-decay loop.</li>
           </ul>
+        </div>
+
+        <h2>Pulse USB Power</h2>
+        <p>Most USB battery powerbank will turn off if consumed current is too low. This option periodically wastes
+          current to keep USB power on. Experiment to find the lowest values for your battery pack. Each pulse consumes
+          about ~35mA. If this is not enough, you can connect A0 pin with a short wire to GND to
+          consume more current (~50mA).</p>
+        <p>Save to flash and restart the board to take effect. This feature is disabled automatically if the USB is
+          plugged to a computer.</p>
+        <div style="display: inline-block;">
+          <div>
+            <label for="keep_usb_battery_onCheckbox">Enable Pulse USB Power</label>
+            <input id="keep_usb_battery_onCheckbox" type="checkbox" value="">
+            <label for="keep_usb_battery_on_ledCheckbox">Pulse LED</label>
+            <input id="keep_usb_battery_on_ledCheckbox" type="checkbox" value="">
+            <label for="keep_usb_battery_on_pulse_period_secSelector">Pulse every:</label>
+            <select id="keep_usb_battery_on_pulse_period_secSelector">
+              <option value="1">1 second</option>
+              <option value="5">5 second</option>
+              <option value="10">10 second</option>
+              <option value="15">15 second</option>
+              <option value="30">30 second</option>
+              <option value="60">60 second</option>
+            </select>
+            <label for="keep_usb_battery_on_pulse_duration_msecSelector">Pulse duration:</label>
+            <select id="keep_usb_battery_on_pulse_duration_msecSelector">
+              <option value="100">100ms</option>
+              <option value="500">500ms</option>
+              <option value="1000">1000ms</option>
+              <option value="2000">2000ms</option>
+            </select>
+          </div>
         </div>
       </div>
 
