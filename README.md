@@ -24,22 +24,6 @@ TODO:
 
 NOTE: the OUT port is designed to drive headphones. It may not work as intended as an input into another audio device.
 
-# USB Power Bank Compatibility
-Most USB power banks will turn off when powering the board, since the current draw is too low.
-
-- Some brands will allow 'low power draw' mode by holding the on button for few seconds (i.e. Xiaomi).
-- A list of tested power banks that support low power draw https://www.candlepowerforums.com/vb/showthread.php?440476-USB-powerbank-WITHOUT-auto-off
-- Use a USB splitter cable to power both the headset and DSP board (see below).
-
-# USB Splitter Cable for Oculus Link
-This splitter cable is confirmed to work with Oculus Link and from power bank. It takes a Micro USB connection and split into USB-C (provides power and USB 2.0 data) and Micro USB (provides power only): https://www.amazon.com/gp/product/B078MFCVLF/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
-
-![splitter cable](images/micro_usb_splitter.png)
-
-You may also need to use a USB-C to Micro USB adaptor like this: https://www.amazon.com/gp/product/B087WKS9NZ/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
-
-![usb c to micro](images/usbc_to_micro.png)
-
 # WebUSB configurator (experimental)
 The latest version of the firmware allows you to config the DSP settings with Chrome browser through WebUSB standard.
 
@@ -54,6 +38,27 @@ To enter and use the WebUSB mode:
 ![chrome notification](images/chrome_notification.png)
 
 ![webusb configurator](images/webusb_configurator.png)
+
+# USB Power Bank Compatibility
+Most USB power banks will turn off when powering the board, since the current draw is too low.
+
+- Some brands will allow 'low power draw' mode by holding the on button for few seconds (i.e. Xiaomi).
+- A list of tested power banks that support low power draw https://www.candlepowerforums.com/vb/showthread.php?440476-USB-powerbank-WITHOUT-auto-off
+- Use a USB splitter cable to power both the headset and DSP board (see below).
+- Try using the 'USB Power Pulse' to periodically consume more power.
+
+# USB Power Pulse
+Turning on the USB Power Pulse feature will turn on the MCU DAC and periodically output max voltage to the A0 pin. This by itself consumes ~35mA of power. This is enough for some USB batteries to keep them awake. If not, you can conenct a short wire between A0 to GND to comsume even more power (~50mA). Adding this wire should be enough (tested with Anker branded batteries).
+
+
+# USB Splitter Cable for Oculus Link
+This splitter cable is confirmed to work with Oculus Link and from power bank. It takes a Micro USB connection and split into USB-C (provides power and USB 2.0 data) and Micro USB (provides power only): https://www.amazon.com/gp/product/B078MFCVLF/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
+
+![splitter cable](images/micro_usb_splitter.png)
+
+You may also need to use a USB-C to Micro USB adaptor like this: https://www.amazon.com/gp/product/B087WKS9NZ/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
+
+![usb c to micro](images/usbc_to_micro.png)
 
 # Update firmware
 The board firmare is updatable via USB.
