@@ -14,8 +14,6 @@ Please see the SGTL5000 [documentation](https://www.pjrc.com/teensy/SGTL5000.pdf
 
 TODO:
 -   Make use of the USER button for switching between presets.
--   Refactor code and put configurations in a header file.
-- Periodically draw large current to keep USB power bank on.
 
 # Usage
 - Plug in a USB power source. Anything from computer, phone, Quest/Quest 2 or some USB power bank (see below) should work.
@@ -25,15 +23,17 @@ TODO:
 NOTE: the OUT port is designed to drive headphones. It may not work as intended as an input into another audio device.
 
 # WebUSB configurator (experimental)
-The latest version of the firmware allows you to config the DSP settings with Chrome browser through WebUSB standard.
+The latest version of the firmware allows you to config the DSP settings with Chrome browser through WebUSB.
 
 To enter and use the WebUSB mode:
 - Connect the board to your computer with a USB cable.
 - Open a recent version of Chrome.
-- Press *RESET* while the *USER* button is held down.
+- Press and hold the *USER* button while pressing the *RESET* button.
+- Release the *USER* button when the LED light turns off.
 - Chrome should recorgnize the device as 'QT Py M0'.
-- Click on the notification to go to the configuration page (or go to https://tanvach.github.io/prettygood_dsp/).
-- Click 'Connect' to pair and connect to the board.
+- Click on the notification to go to the configuration page (https://tanvach.github.io/prettygood_dsp/).
+- Click 'Connect' to pair and connect to the board (only needs to be done once).
+- The LED light will turn on when WebUSB connection is established.
 
 ![chrome notification](images/chrome_notification.png)
 
