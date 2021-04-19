@@ -45,10 +45,10 @@ Most USB power banks will turn off when powering the board, since the current dr
 - Some brands will allow 'low power draw' mode by holding the on button for few seconds (i.e. Xiaomi).
 - A list of tested power banks that support low power draw https://www.candlepowerforums.com/vb/showthread.php?440476-USB-powerbank-WITHOUT-auto-off
 - Use a USB splitter cable to power both the headset and DSP board (see below).
-- Try using the 'USB Power Pulse' to periodically consume more power.
+- Try using the 'Pulse USB Power' to periodically consume more power.
 
-# USB Power Pulse
-Turning on the USB Power Pulse feature will turn on the MCU DAC and periodically output max voltage to the A0 pin. This by itself consumes ~35mA of power. This is enough for some USB batteries to keep them awake. If not, you can conenct a short wire between A0 to GND to comsume even more power (~50mA). Adding this wire should be enough (tested with Anker branded batteries).
+# Pulse USB Power
+This feature will turn on the MCU DAC and periodically output max voltage to the A0 pin. This by itself consumes ~35mA of power. This is enough for some USB batteries to keep them awake. If not, you can conenct a short wire between A0 to GND to comsume even more power (~50mA). Adding this wire should be enough (tested with Anker branded batteries).
 
 
 # USB Splitter Cable for Oculus Link
