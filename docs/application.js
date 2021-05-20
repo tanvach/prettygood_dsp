@@ -11,6 +11,7 @@
     // Default when there's no USB connection
     var config_dict = JSON.parse(`
         {
+            "version": "null",
             "volume": 0,
             "filter_type": 1,
             "filter_count": 7,
@@ -280,7 +281,16 @@
         selector.oninput = function () { handler(0, type, selector); };
     }
 
+    // Text display
+    function configureText(type, value) {
+        var text = document.getElementById(type + "Text");
+        text.innerHTML = value;
+    }
+
     function configUIElements() {
+
+        configureText("version", config_dict.version);
+
         configureFilterSliders(filter_count);
         configureSlider("volume", 0, config_dict.volume, 0, 0.8, sliderHandler);
 

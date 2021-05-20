@@ -24,6 +24,8 @@
  * THE SOFTWARE.
  */
 
+#define VERSION "1.0.0"
+
 #include <Arduino.h>
 #include <Adafruit_ZeroI2S.h>
 #include <RTCZero.h>

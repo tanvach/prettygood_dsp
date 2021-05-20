@@ -21,11 +21,13 @@
     </div>
 
     <div id="header">
-      <h1>Prettygood DSP Configurator [BETA]</h1>
+      <h1>Prettygood DSP Configurator</h1>
       <p>This tool is in development. If your board stops responding, reset the board with the RESET switch and try
         connecting again.</p>
-      <p>*Reflashing or updating the firmware will reset values to the built-in defaults* If you're seeing blank
-        options, this likely means your firmware version is too old. Please flash to the latest version.</p>
+      <p><b>Reflashing or updating the firmware will reset values to the built-in defaults.</b> If you're seeing blank
+        options, this likely means your firmware version is too old. Please flash to the latest version. "Apply" button will
+        apply the settings immediately without saving. "Save to flash" will apply settings and save settings to flash.
+      </p>
     </div>
 
     <div class="connect-container">
@@ -39,74 +41,74 @@
     <div id="wrapper">
       <div id="content">
 
-        <div class="post">
+        <h2>Firmware Version</h2>
+        <p id="versionText"></p>
 
-          <h2>Volume Settings</h2>
-          <p>Output headphone volume. Limiting ouput volume to 0.8 due to distortions at high volume.</p>
-          <div style="display: flex;">
-            <div>
-              <label for="volume0Slider">Volume</label>
-              <input id="volume0Slider" type="range" min="0" max="0.8" step="0.01" value="0"
-                style="height: 10px; width: 200px;">
-              <span id="volume0Slider-value">0.75</span>
-            </div>
+        <h2>Volume Settings</h2>
+        <p>Output headphone volume. Limiting ouput volume to 0.8 due to distortions at high volume.</p>
+        <div style="display: flex;">
+          <div>
+            <label for="volume0Slider">Volume</label>
+            <input id="volume0Slider" type="range" min="0" max="0.8" step="0.01" value="0"
+              style="height: 10px; width: 200px;">
+            <span id="volume0Slider-value">0.75</span>
           </div>
+        </div>
 
-          <h2>EQ Settings</h2>
-          <p>
-            Adjust the individual filter parameters to change the EQ frequency response.
-            The filters are based on 'peaking' Biquad design.
-          </p>
+        <h2>EQ Settings</h2>
+        <p>
+          Adjust the individual filter parameters to change the EQ frequency response.
+          The filters are based on 'peaking' Biquad design.
+        </p>
 
-          <p>
-            <canvas id="canvasID" width="1000" height="250" style="float: left;"></canvas>
-          </p>
+        <p>
+          <canvas id="canvasID" width="1000" height="250" style="float: left;"></canvas>
+        </p>
 
-          <p><br><br></p>
+        <p><br><br></p>
 
-          <!-- Sliders and other controls will be added here -->
+        <!-- Sliders and other controls will be added here -->
 
-          <div style="display: inline-block; margin-top: 20px;" id="controls">
-            <!-- Place holder for sliders -->
-            <div></div>
+        <div style="display: inline-block; margin-top: 20px;" id="controls">
+          <!-- Place holder for sliders -->
+          <div></div>
+        </div>
+
+        <h2>Psycho-acoustic Bass Enhancer</h2>
+        <p>Enhances bass by mixing a mono, low-pass filtered copy of the original stereo signal, back into the stereo
+          signal, which is then optionally high pass filtered (to
+          remove inaudible subsonic frequencies).</p>
+        <div style="display: inline-block;">
+          <div>
+            <label for="enhance_bassCheckbox">Enable PA Bass Enhancer:</label>
+            <input id="enhance_bassCheckbox" type="checkbox" value="">
+            <label for="enhance_bass_cutoffSelector">Cut Off Frequency:</label>
+            <select id="enhance_bass_cutoffSelector">
+              <option value="0">80Hz</option>
+              <option value="1">100Hz</option>
+              <option value="2">125Hz</option>
+              <option value="3">150Hz</option>
+              <option value="4">175Hz</option>
+              <option value="5">200Hz</option>
+              <option value="6">225Hz</option>
+            </select>
+            <label for="enhance_bass_high_passSelector">High pass filter:</label>
+            <select id="enhance_bass_high_passSelector">
+              <option value="0">Enable</option>
+              <option value="1">Bypass/Disable</option>
+            </select>
           </div>
-
-          <h2>Psycho-acoustic Bass Enhancer</h2>
-          <p>Enhances bass by mixing a mono, low-pass filtered copy of the original stereo signal, back into the stereo
-            signal, which is then optionally high pass filtered (to
-            remove inaudible subsonic frequencies).</p>
-          <div style="display: inline-block;">
-            <div>
-              <label for="enhance_bassCheckbox">Enable PA Bass Enhancer</label>
-              <input id="enhance_bassCheckbox" type="checkbox" value="">
-              <label for="enhance_bass_cutoffSelector">Cut Off Frequency:</label>
-              <select id="enhance_bass_cutoffSelector">
-                <option value="0">80Hz</option>
-                <option value="1">100Hz</option>
-                <option value="2">125Hz</option>
-                <option value="3">150Hz</option>
-                <option value="4">175Hz</option>
-                <option value="5">200Hz</option>
-                <option value="6">225Hz</option>
-              </select>
-              <label for="enhance_bass_high_passSelector">High pass filter:</label>
-              <select id="enhance_bass_high_passSelector">
-                <option value="0">Enable</option>
-                <option value="1">Bypass/Disable</option>
-              </select>
-            </div>
-            <div>
-              <label for="enhance_bass_lr_vol0Slider">Original Signal Volume</label>
-              <input id="enhance_bass_lr_vol0Slider" type="range" min="0" max="1" step="0.01" value="0"
-                style="height: 10px; width: 200px;">
-              <span id="enhance_bass_lr_vol0Slider-value">0</span>
-            </div>
-            <div>
-              <label for="enhance_bass_bass_vol0Slider">Bass Volume</label>
-              <input id="enhance_bass_bass_vol0Slider" type="range" min="0" max="1" step="0.01" value="0"
-                style="height: 10px; width: 200px;">
-              <span id="enhance_bass_bass_vol0Slider-value">0</span>
-            </div>
+          <div>
+            <label for="enhance_bass_lr_vol0Slider">Original Signal Volume</label>
+            <input id="enhance_bass_lr_vol0Slider" type="range" min="0" max="1" step="0.01" value="0"
+              style="height: 10px; width: 200px;">
+            <span id="enhance_bass_lr_vol0Slider-value">0</span>
+          </div>
+          <div>
+            <label for="enhance_bass_bass_vol0Slider">Bass Volume</label>
+            <input id="enhance_bass_bass_vol0Slider" type="range" min="0" max="1" step="0.01" value="0"
+              style="height: 10px; width: 200px;">
+            <span id="enhance_bass_bass_vol0Slider-value">0</span>
           </div>
         </div>
 
@@ -114,7 +116,7 @@
         <p>Compressor/expander to help reduce clipping with sudden loud noises.</p>
         <div style="display: inline-block;">
           <div>
-            <label for="auto_volumeCheckbox">Enable Auto Volume</label>
+            <label for="auto_volumeCheckbox">Enable Auto Volume:</label>
             <input id="auto_volumeCheckbox" type="checkbox" value="">
             <label for="auto_volume_max_gainSelector">Max Gain:</label>
             <select id="auto_volume_max_gainSelector">
@@ -183,9 +185,9 @@
           plugged to a computer.</p>
         <div style="display: inline-block;">
           <div>
-            <label for="keep_usb_battery_onCheckbox">Enable Pulse USB Power</label>
+            <label for="keep_usb_battery_onCheckbox">Enable Pulse USB Power:</label>
             <input id="keep_usb_battery_onCheckbox" type="checkbox" value="">
-            <label for="keep_usb_battery_on_ledCheckbox">Pulse LED</label>
+            <label for="keep_usb_battery_on_ledCheckbox">Pulse LED:</label>
             <input id="keep_usb_battery_on_ledCheckbox" type="checkbox" value="">
             <label for="keep_usb_battery_on_pulse_period_secSelector">Pulse every:</label>
             <select id="keep_usb_battery_on_pulse_period_secSelector">

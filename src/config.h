@@ -54,6 +54,8 @@ void LoadConfig(boolean reload_defaults = false) {
 
     DynamicJsonDocument new_config_doc(JSON_DOC_SIZE);
 
+    new_config_doc["version"] = VERSION;
+    
     // Default values
     new_config_doc["volume"] = 0.7;
 
@@ -99,7 +101,7 @@ void LoadConfig(boolean reload_defaults = false) {
     new_config_doc["auto_volume_decay"] = 2;
 
     // Keep USB Battery On
-    new_config_doc["keep_usb_battery_on"] = true;
+    new_config_doc["keep_usb_battery_on"] = false;
     new_config_doc["keep_usb_battery_on_pulse_period_sec"] = 30;
     new_config_doc["keep_usb_battery_on_pulse_duration_msec"] = 100;
     new_config_doc["keep_usb_battery_on_led"] = true;
