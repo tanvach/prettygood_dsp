@@ -2,7 +2,7 @@
 
 ![board photo](images/v1_photo.jpeg)
 
-A self contained, Arduino compatible board for applying audio DSP. The intended purpose is to equalize and apply bass boost to [BMR VR off ear headphones](https://prettygood3d.com/post/999028410814/quest-2-off-ear-bmr-v01), but can be adapted for any other light DSP tasks by SGTL5000 codec.
+A self contained, Arduino compatible board for applying audio DSP. The intended purpose is to equalize and apply bass boost to [BMR VR off ear headphones](https://prettygood3d.com/post/999028410814/quest-2-off-ear-bmr-v01), but can be adapted for any other light DSP tasks by SGTL5000 codec. Fully assembled kit can be purchased [from our store](https://prettygood3d.com/listing/1022847887).
 
 Supports:
 -   7 band prarametric or 5 band graphic EQ.
