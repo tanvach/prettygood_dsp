@@ -1,11 +1,12 @@
 # Prettygood DSP
 
-![board photo](images/v1_photo.jpeg)
+![board photo](images/v1_photo_final.jpg)
 
 A self contained, Arduino compatible board for applying audio DSP. The intended purpose is to equalize and apply bass boost to [BMR VR off ear headphones](https://prettygood3d.com/post/999028410814/quest-2-off-ear-bmr-v01), but can be adapted for any other light DSP tasks by SGTL5000 codec. Fully assembled kit can be purchased [from our store](https://prettygood3d.com/listing/1022847887).
 
 Supports:
 -   7 band prarametric or 5 band graphic EQ.
+-   AutoEQ profiles for 1000+ headphones and earbuds.
 -   Psycho-acoustic bass boost to over come limited bass response of small headphone drivers.
 -   Stereo surround expansion.
 -   Automatic volume control.
@@ -22,7 +23,7 @@ TODO:
 
 NOTE: the OUT port is designed to drive headphones. It may not work as intended as an input into another audio device.
 
-# WebUSB configurator (experimental)
+# WebUSB configurator
 The latest version of the firmware allows you to config the DSP settings with Chrome browser through WebUSB.
 
 To enter and use the WebUSB mode:
@@ -52,13 +53,9 @@ This feature will turn on the MCU DAC and periodically output max voltage to the
 
 
 # USB Splitter Cable for Oculus Link
-This splitter cable is confirmed to work with Oculus Link and from power bank. It takes a Micro USB connection and split into USB-C (provides power and USB 2.0 data) and Micro USB (provides power only): https://www.amazon.com/gp/product/B078MFCVLF/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
+[This splitter cable](https://www.amazon.com/gp/product/B078MFCVLF/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1) is confirmed to work with Oculus Link and from power bank. It takes a Micro USB connection and split into USB-C (provides power and USB 2.0 data) and Micro USB (provides power only).
 
-![splitter cable](images/micro_usb_splitter.png)
-
-You may also need to use a USB-C to Micro USB adaptor like this: https://www.amazon.com/gp/product/B087WKS9NZ/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
-
-![usb c to micro](images/usbc_to_micro.png)
+Alternatively, you can also [use this USB-C PD charging + USB-C headphone splitter](https://www.amazon.com/Splitter-HiMusic-Charging-Converter-Compatible/dp/B07MSLJ64X). The headphone port provides enough power to power the DSP. 
 
 # Update firmware
 The board firmare is updatable via USB.
