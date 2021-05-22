@@ -1,4 +1,4 @@
-(function () {
+(function() {
     'use strict';
 
     // init() once the page has finished loading.
@@ -37,7 +37,7 @@
     var height;
 
     // Start off by initializing a new context.
-    var context = new (window.AudioContext || window.webkitAudioContext)();
+    var context = new(window.AudioContext || window.webkitAudioContext)();
 
     if (!context.createGain)
         context.createGain = context.createGainNode;
@@ -47,13 +47,13 @@
         context.createScriptProcessor = context.createJavaScriptNode;
 
     // shim layer with setTimeout fallback
-    window.requestAnimFrame = (function () {
+    window.requestAnimFrame = (function() {
         return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame ||
             window.oRequestAnimationFrame ||
             window.msRequestAnimationFrame ||
-            function (callback) {
+            function(callback) {
                 window.setTimeout(callback, 1000 / 60);
             };
     })();
@@ -61,7 +61,7 @@
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-    
+
     function dbToY(db) {
         var y = (0.5 * height) - pixelsPerDb * db;
         return y;
@@ -211,24 +211,24 @@
     }
 
     function createSlider(controls, name, width, text_width) {
-        var sliderText = '<div> '
-            + '<input id="' + name + 'Slider" '
-            + 'type="range" min="0" max="1" step="0.001" value="0" style="height: 10px; width: ' + width + 'px;"> '
-            + '<span id="' + name + 'Slider-value" style="display: inline-block; width: ' + text_width + 'px;">'
-            + name
-            + '</span> </div>';
+        var sliderText = '<div> ' +
+            '<input id="' + name + 'Slider" ' +
+            'type="range" min="0" max="1" step="0.001" value="0" style="height: 10px; width: ' + width + 'px;"> ' +
+            '<span id="' + name + 'Slider-value" style="display: inline-block; width: ' + text_width + 'px;">' +
+            name +
+            '</span> </div>';
         return sliderText;
     }
 
     function addFitlerSliders(n) {
         var controls = document.getElementById("controls");
         for (var i = 0; i < n; ++i) {
-            controls.innerHTML = controls.innerHTML
-                + '<div style="display: flex;"> Filter ' + i
-                + createSlider(controls, 'frequency' + i, 200, 130)
-                + createSlider(controls, 'gain' + i, 200, 90)
-                + createSlider(controls, 'Q' + i, 200, 90)
-                + '</div>';
+            controls.innerHTML = controls.innerHTML +
+                '<div style="display: flex;"> Filter ' + i +
+                createSlider(controls, 'frequency' + i, 200, 130) +
+                createSlider(controls, 'gain' + i, 200, 90) +
+                createSlider(controls, 'Q' + i, 200, 90) +
+                '</div>';
         }
     }
 
@@ -251,7 +251,7 @@
         slider.max = max;
         slider.value = value;
         handler(0, type, slider, i);
-        slider.oninput = function () { handler(0, type, slider, i); };
+        slider.oninput = function() { handler(0, type, slider, i); };
     }
 
     // Check boxes
@@ -264,7 +264,7 @@
         var checkbox = document.getElementById(type + "Checkbox");
         checkbox.checked = value;
         handler(0, type, checkbox);
-        checkbox.oninput = function () { handler(0, type, checkbox); };
+        checkbox.oninput = function() { handler(0, type, checkbox); };
     }
 
     // Selectors
@@ -278,13 +278,37 @@
         var selector = document.getElementById(type + "Selector");
         selector.value = value;
         handler(0, type, selector);
-        selector.oninput = function () { handler(0, type, selector); };
+        selector.oninput = function() { handler(0, type, selector); };
     }
 
     // Text display
     function configureText(type, value) {
         var text = document.getElementById(type + "Text");
         text.innerHTML = value;
+    }
+
+    // AutoEQ selector
+    function configureAutoEQChoices(json) {
+        var autoeqElement = document.getElementById("autoeq");
+        var autoeqChoices = new Choices(autoeqElement, {
+            choices: json,
+            searchResultLimit: 20,
+            searchFields: ['label'],
+            shouldSort: false
+        });
+
+        // Apply selected profile to UI
+        autoeqElement.addEventListener(
+            'choice',
+            function(event) {
+                var profile = JSON.parse(event.detail.choice.value);
+                config_dict.filter_fc = profile.filter_fc;
+                config_dict.filter_db = profile.filter_db;
+                config_dict.filter_q = profile.filter_q;
+                configUIElements();
+            },
+            false,
+        );
     }
 
     function configUIElements() {
@@ -307,11 +331,12 @@
         configureSlider("auto_volume_threshold", 0, config_dict.auto_volume_threshold, -96, 0, sliderHandler);
         configureSlider("auto_volume_attack", 0, config_dict.auto_volume_attack, 0, 20, sliderHandler);
         configureSlider("auto_volume_decay", 0, config_dict.auto_volume_decay, 0, 20, sliderHandler);
-        
+
         configureCheckbox("keep_usb_battery_on", config_dict.keep_usb_battery_on, checkboxHandler);
         configureCheckbox("keep_usb_battery_on_led", config_dict.keep_usb_battery_on_led, checkboxHandler);
         configureSelector("keep_usb_battery_on_pulse_period_sec", config_dict.keep_usb_battery_on_pulse_period_sec, selectorHandler);
         configureSelector("keep_usb_battery_on_pulse_duration_msec", config_dict.keep_usb_battery_on_pulse_duration_msec, selectorHandler);
+
     }
 
     function processReceivedText(text) {
@@ -363,7 +388,7 @@
                 connectButton.textContent = 'Disconnect';
 
                 // Override function
-                sendJson = function (text) {
+                sendJson = function(text) {
                     port.send(new TextEncoder('utf-8').encode(''));
                     port.send(new TextEncoder('utf-8').encode(text));
                 }
@@ -390,7 +415,7 @@
             });
         }
 
-        connectButton.addEventListener('click', function () {
+        connectButton.addEventListener('click', function() {
             if (port) {
                 port.disconnect();
                 connectButton.textContent = 'Connect';
@@ -416,15 +441,15 @@
             }
         });
 
-        applyButton.addEventListener('click', function () {
+        applyButton.addEventListener('click', function() {
             sendJson(JSON.stringify(config_dict));
         });
 
-        reloaddefaultsButton.addEventListener('click', function () {
+        reloaddefaultsButton.addEventListener('click', function() {
             sendJson('{"reload_defaults":true}');
         });
 
-        saveflashButton.addEventListener('click', async function () {
+        saveflashButton.addEventListener('click', async function() {
             sendJson(JSON.stringify(config_dict));
             await sleep(100);
             sendJson('{"save_to_flash":true}');
@@ -432,7 +457,7 @@
     }
 
     // Empty if not connected
-    function sendJson() { }
+    function sendJson() {}
 
     function init() {
         initAudio();
@@ -445,6 +470,11 @@
 
         addFitlerSliders(filter_count);
         configUIElements();
+
+        // Load AutoEQ profiles
+        fetch("./autoeq_profiles.json")
+            .then(response => response.json())
+            .then(json => configureAutoEQChoices(json));
 
         drawCurve();
     }

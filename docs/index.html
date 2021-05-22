@@ -1,89 +1,91 @@
 <!doctype html>
 
 <head>
-  <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
-  <title>Prettygood DSP Configurator</title>
-  <link rel="stylesheet" href="./style.css" type="text/css" media="screen" />
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="./choices.min.css" />
+    <link rel="stylesheet" href="./style.css" type="text/css" media="screen" />
+    <title>Prettygood DSP Configurator</title>
 </head>
 
 <body>
 
-  <script type="text/javascript" src="./serial.js"></script>
-  <script type="text/javascript" src="./application.js"></script>
+    <script type="text/javascript" src="./serial.js"></script>
+    <script type="text/javascript" src="./application.js"></script>
+    <script src="./choices.min.js"></script>
 
-  <div id="container">
+    <div id="container">
 
-    <div id="nav">
-      <ul>
-        <li><a href="https://github.com/tanvach/prettygood_dsp" target="_blank">Github</a>
-        </li>
-      </ul>
-    </div>
-
-    <div id="header">
-      <h1>Prettygood DSP Configurator</h1>
-      <p>This tool is in development. If your board stops responding, reset the board with the RESET switch and try
-        connecting again.</p>
-      <p><b>Reflashing or updating the firmware will reset values to the built-in defaults.</b> If you're seeing blank
-        options, this likely means your firmware version is too old. Please flash to the latest version. "Apply" button will
-        apply the settings immediately without saving. "Save to flash" will apply settings and save settings to flash.
-      </p>
-    </div>
-
-    <div class="connect-container">
-      <button id="apply" class="button black">Apply</button>
-      <button id="reloaddefaults" class="button black">Reload defaults</button>
-      <button id="saveflash" class="button black">Save to flash</button>
-      <button id="connect" class="button black">Connect</button>
-      <span id="status"></span>
-    </div>
-
-    <div id="wrapper">
-      <div id="content">
-
-        <h2>Firmware Version</h2>
-        <p id="versionText"></p>
-
-        <h2>Volume Settings</h2>
-        <p>Output headphone volume. Limiting ouput volume to 0.8 due to distortions at high volume.</p>
-        <div style="display: flex;">
-          <div>
-            <label for="volume0Slider">Volume</label>
-            <input id="volume0Slider" type="range" min="0" max="0.8" step="0.01" value="0"
-              style="height: 10px; width: 200px;">
-            <span id="volume0Slider-value">0.75</span>
-          </div>
+        <div id="nav">
+            <ul>
+                <li><a href="https://github.com/tanvach/prettygood_dsp" target="_blank">Github</a>
+                </li>
+            </ul>
         </div>
 
-        <h2>EQ Settings</h2>
-        <p>
-          Adjust the individual filter parameters to change the EQ frequency response.
-          The filters are based on 'peaking' Biquad design.
-        </p>
-
-        <p>
-          <canvas id="canvasID" width="1000" height="250" style="float: left;"></canvas>
-        </p>
-
-        <p><br><br></p>
-
-        <!-- Sliders and other controls will be added here -->
-
-        <div style="display: inline-block; margin-top: 20px;" id="controls">
-          <!-- Place holder for sliders -->
-          <div></div>
+        <div id="header">
+            <h1>Prettygood DSP Configurator</h1>
+            <p>This tool is in development. If your board stops responding, reset the board with the RESET switch and try connecting again.</p>
+            <p><b>Reflashing or updating the firmware will reset values to the built-in defaults.</b> If you're seeing blank options, this likely means your firmware version is too old. Please flash to the latest version. "Apply" button will apply the settings
+                immediately without saving. "Save to flash" will apply settings and save settings to flash.
+            </p>
         </div>
 
-        <h2>Psycho-acoustic Bass Enhancer</h2>
-        <p>Enhances bass by mixing a mono, low-pass filtered copy of the original stereo signal, back into the stereo
-          signal, which is then optionally high pass filtered (to
-          remove inaudible subsonic frequencies).</p>
-        <div style="display: inline-block;">
-          <div>
-            <label for="enhance_bassCheckbox">Enable PA Bass Enhancer:</label>
-            <input id="enhance_bassCheckbox" type="checkbox" value="">
-            <label for="enhance_bass_cutoffSelector">Cut Off Frequency:</label>
-            <select id="enhance_bass_cutoffSelector">
+        <div class="connect-container">
+            <button id="apply" class="button black">Apply</button>
+            <button id="reloaddefaults" class="button black">Reload defaults</button>
+            <button id="saveflash" class="button black">Save to flash</button>
+            <button id="connect" class="button black">Connect</button>
+            <span id="status"></span>
+        </div>
+
+        <div id="wrapper">
+            <div id="content">
+
+                <h2>Firmware Version</h2>
+                <p id="versionText"></p>
+
+                <h2>Volume Settings</h2>
+                <p>Output headphone volume. Limiting ouput volume to 0.8 due to distortions at high volume.</p>
+                <div style="display: flex;">
+                    <div>
+                        <label for="volume0Slider">Volume</label>
+                        <input id="volume0Slider" type="range" min="0" max="0.8" step="0.01" value="0" style="height: 10px; width: 200px;">
+                        <span id="volume0Slider-value">0.75</span>
+                    </div>
+                </div>
+
+                <h2>EQ Settings</h2>
+                <p>
+                    Adjust the individual filter parameters to change the EQ frequency response. The filters are based on 'peaking' Biquad design.
+                </p>
+
+                <div style="display: inline-block; width: 500px;">
+                    <label for="autoeq">Pre-computed AutoEQ Profiles:</label>
+                    <select id="autoeq">
+          </select>
+                </div>
+
+                <p>
+                    <canvas id="canvasID" width="1000" height="250" style="float: left;"></canvas>
+                </p>
+
+                <p><br><br></p>
+
+                <!-- Sliders and other controls will be added here -->
+
+                <div style="display: inline-block; margin-top: 20px;" id="controls">
+                    <!-- Place holder for sliders -->
+                    <div></div>
+                </div>
+
+                <h2>Psycho-acoustic Bass Enhancer</h2>
+                <p>Enhances bass by mixing a mono, low-pass filtered copy of the original stereo signal, back into the stereo signal, which is then optionally high pass filtered (to remove inaudible subsonic frequencies).</p>
+                <div style="display: inline-block;">
+                    <div>
+                        <label for="enhance_bassCheckbox">Enable PA Bass Enhancer:</label>
+                        <input id="enhance_bassCheckbox" type="checkbox" value="">
+                        <label for="enhance_bass_cutoffSelector">Cut Off Frequency:</label>
+                        <select id="enhance_bass_cutoffSelector">
               <option value="0">80Hz</option>
               <option value="1">100Hz</option>
               <option value="2">125Hz</option>
@@ -92,105 +94,90 @@
               <option value="5">200Hz</option>
               <option value="6">225Hz</option>
             </select>
-            <label for="enhance_bass_high_passSelector">High pass filter:</label>
-            <select id="enhance_bass_high_passSelector">
+                        <label for="enhance_bass_high_passSelector">High pass filter:</label>
+                        <select id="enhance_bass_high_passSelector">
               <option value="0">Enable</option>
               <option value="1">Bypass/Disable</option>
             </select>
-          </div>
-          <div>
-            <label for="enhance_bass_lr_vol0Slider">Original Signal Volume</label>
-            <input id="enhance_bass_lr_vol0Slider" type="range" min="0" max="1" step="0.01" value="0"
-              style="height: 10px; width: 200px;">
-            <span id="enhance_bass_lr_vol0Slider-value">0</span>
-          </div>
-          <div>
-            <label for="enhance_bass_bass_vol0Slider">Bass Volume</label>
-            <input id="enhance_bass_bass_vol0Slider" type="range" min="0" max="1" step="0.01" value="0"
-              style="height: 10px; width: 200px;">
-            <span id="enhance_bass_bass_vol0Slider-value">0</span>
-          </div>
-        </div>
+                    </div>
+                    <div>
+                        <label for="enhance_bass_lr_vol0Slider">Original Signal Volume</label>
+                        <input id="enhance_bass_lr_vol0Slider" type="range" min="0" max="1" step="0.01" value="0" style="height: 10px; width: 200px;">
+                        <span id="enhance_bass_lr_vol0Slider-value">0</span>
+                    </div>
+                    <div>
+                        <label for="enhance_bass_bass_vol0Slider">Bass Volume</label>
+                        <input id="enhance_bass_bass_vol0Slider" type="range" min="0" max="1" step="0.01" value="0" style="height: 10px; width: 200px;">
+                        <span id="enhance_bass_bass_vol0Slider-value">0</span>
+                    </div>
+                </div>
 
-        <h2>Auto Volume</h2>
-        <p>Compressor/expander to help reduce clipping with sudden loud noises.</p>
-        <div style="display: inline-block;">
-          <div>
-            <label for="auto_volumeCheckbox">Enable Auto Volume:</label>
-            <input id="auto_volumeCheckbox" type="checkbox" value="">
-            <label for="auto_volume_max_gainSelector">Max Gain:</label>
-            <select id="auto_volume_max_gainSelector">
+                <h2>Auto Volume</h2>
+                <p>Compressor/expander to help reduce clipping with sudden loud noises.</p>
+                <div style="display: inline-block;">
+                    <div>
+                        <label for="auto_volumeCheckbox">Enable Auto Volume:</label>
+                        <input id="auto_volumeCheckbox" type="checkbox" value="">
+                        <label for="auto_volume_max_gainSelector">Max Gain:</label>
+                        <select id="auto_volume_max_gainSelector">
               <option value="0">0 dB</option>
               <option value="1">6 dB</option>
               <option value="2">12 dB</option>
             </select>
-            <label for="auto_volume_lbi_responseSelector">Response time:</label>
-            <select id="auto_volume_lbi_responseSelector">
+                        <label for="auto_volume_lbi_responseSelector">Response time:</label>
+                        <select id="auto_volume_lbi_responseSelector">
               <option value="0">0 ms</option>
               <option value="1">25 ms</option>
               <option value="2">50 ms</option>
               <option value="3">100 ms</option>
             </select>
-            <label for="auto_volume_hard_limitSelector">Type:</label>
-            <select id="auto_volume_hard_limitSelector">
+                        <label for="auto_volume_hard_limitSelector">Type:</label>
+                        <select id="auto_volume_hard_limitSelector">
               <option value="0">Soft knee</option>
               <option value="1">Hard limit</option>
             </select>
-          </div>
-          <div>
-            <label for="auto_volume_threshold0Slider">Threshold (dBFS)</label>
-            <input id="auto_volume_threshold0Slider" type="range" min="0" max="10" step="0.01" value="0"
-              style="height: 10px; width: 200px;">
-            <span id="auto_volume_threshold0Slider-value">0</span>
-          </div>
-          <div>
-            <label for="auto_volume_attack0Slider">Attack (dB/s)</label>
-            <input id="auto_volume_attack0Slider" type="range" min="0" max="10" step="0.01" value="0"
-              style="height: 10px; width: 200px;">
-            <span id="auto_volume_attack0Slider-value">0</span>
-          </div>
-          <div>
-            <label for="auto_volume_decay0Slider">Decay (dB/s)</label>
-            <input id="auto_volume_decay0Slider" type="range" min="0" max="10" step="0.01" value="0"
-              style="height: 10px; width: 200px;">
-            <span id="auto_volume_decay0Slider-value">0</span>
-          </div>
-          <ul>
-            <li>Max Gain is the maximum gain that can be applied for expanding.</li>
-            <li>Response controls the integration time for the compressor. Larger values average the volume over a
-              longer time, allowing short-term peaks through.</li>
-            <li>&#39;Soft knee&#39; compressor is used to progressively compress louder values which are near to or
-              above the threshold (the louder they are, the greater the compression).</li>
-            <li>&#39;Hard limit&#39; compressor decrease all values above the threshold to the same loudness.</li>
-            <li>Threshold is specified as a range between -96dBFS to 0dBFS (dB relative to full scale), where -18dBFS
-              is a typical value.</li>
-            <li>Attack is the rate of decrease in gain when the signal is over threshold. Too high of an attack causes
-              an unnatural sound as the input signal may be
-              distorted. Too low of an attack may cause saturation of the
-              output as the incoming signal is not compressed quickly
-              enough.</li>
-            <li>Decay controls how fast gain is restored once the level drops below threshold. It is typically set to
-              a longer value than attack. It is desirable to use very slow
-              decay rate to avoid any distortion in the signal and prevent
-              the AVC from entering a continuous attack-decay loop.</li>
-          </ul>
-        </div>
+                    </div>
+                    <div>
+                        <label for="auto_volume_threshold0Slider">Threshold (dBFS)</label>
+                        <input id="auto_volume_threshold0Slider" type="range" min="0" max="10" step="0.01" value="0" style="height: 10px; width: 200px;">
+                        <span id="auto_volume_threshold0Slider-value">0</span>
+                    </div>
+                    <div>
+                        <label for="auto_volume_attack0Slider">Attack (dB/s)</label>
+                        <input id="auto_volume_attack0Slider" type="range" min="0" max="10" step="0.01" value="0" style="height: 10px; width: 200px;">
+                        <span id="auto_volume_attack0Slider-value">0</span>
+                    </div>
+                    <div>
+                        <label for="auto_volume_decay0Slider">Decay (dB/s)</label>
+                        <input id="auto_volume_decay0Slider" type="range" min="0" max="10" step="0.01" value="0" style="height: 10px; width: 200px;">
+                        <span id="auto_volume_decay0Slider-value">0</span>
+                    </div>
+                    <ul>
+                        <li>Max Gain is the maximum gain that can be applied for expanding.</li>
+                        <li>Response controls the integration time for the compressor. Larger values average the volume over a longer time, allowing short-term peaks through.</li>
+                        <li>&#39;Soft knee&#39; compressor is used to progressively compress louder values which are near to or above the threshold (the louder they are, the greater the compression).</li>
+                        <li>&#39;Hard limit&#39; compressor decrease all values above the threshold to the same loudness.</li>
+                        <li>Threshold is specified as a range between -96dBFS to 0dBFS (dB relative to full scale), where -18dBFS is a typical value.</li>
+                        <li>Attack is the rate of decrease in gain when the signal is over threshold. Too high of an attack causes an unnatural sound as the input signal may be distorted. Too low of an attack may cause saturation of the output as the incoming
+                            signal is not compressed quickly enough.
+                        </li>
+                        <li>Decay controls how fast gain is restored once the level drops below threshold. It is typically set to a longer value than attack. It is desirable to use very slow decay rate to avoid any distortion in the signal and prevent the
+                            AVC from entering a continuous attack-decay loop.</li>
+                    </ul>
+                </div>
 
-        <h2>Pulse USB Power</h2>
-        <p>Most USB battery powerbank will turn off if consumed current is too low. This option periodically wastes
-          current to keep USB power on. Experiment to find the lowest values for your battery pack. Each pulse consumes
-          about ~35mA. If this is not enough, you can connect A0 pin with a short wire to GND to
-          consume more current (~50mA).</p>
-        <p>Save to flash and restart the board to take effect. This feature is disabled automatically if the USB is
-          plugged to a computer.</p>
-        <div style="display: inline-block;">
-          <div>
-            <label for="keep_usb_battery_onCheckbox">Enable Pulse USB Power:</label>
-            <input id="keep_usb_battery_onCheckbox" type="checkbox" value="">
-            <label for="keep_usb_battery_on_ledCheckbox">Pulse LED:</label>
-            <input id="keep_usb_battery_on_ledCheckbox" type="checkbox" value="">
-            <label for="keep_usb_battery_on_pulse_period_secSelector">Pulse every:</label>
-            <select id="keep_usb_battery_on_pulse_period_secSelector">
+                <h2>Pulse USB Power</h2>
+                <p>Most USB battery powerbank will turn off if consumed current is too low. This option periodically wastes current to keep USB power on. Experiment to find the lowest values for your battery pack. Each pulse consumes about ~35mA. If this
+                    is not enough, you can connect A0 pin with a short wire to GND to consume more current (~50mA).</p>
+                <p>Save to flash and restart the board to take effect. This feature is disabled automatically if the USB is plugged to a computer.</p>
+                <div style="display: inline-block;">
+                    <div>
+                        <label for="keep_usb_battery_onCheckbox">Enable Pulse USB Power:</label>
+                        <input id="keep_usb_battery_onCheckbox" type="checkbox" value="">
+                        <label for="keep_usb_battery_on_ledCheckbox">Pulse LED:</label>
+                        <input id="keep_usb_battery_on_ledCheckbox" type="checkbox" value="">
+                        <label for="keep_usb_battery_on_pulse_period_secSelector">Pulse every:</label>
+                        <select id="keep_usb_battery_on_pulse_period_secSelector">
               <option value="1">1 second</option>
               <option value="5">5 second</option>
               <option value="10">10 second</option>
@@ -198,26 +185,26 @@
               <option value="30">30 second</option>
               <option value="60">60 second</option>
             </select>
-            <label for="keep_usb_battery_on_pulse_duration_msecSelector">Pulse duration:</label>
-            <select id="keep_usb_battery_on_pulse_duration_msecSelector">
+                        <label for="keep_usb_battery_on_pulse_duration_msecSelector">Pulse duration:</label>
+                        <select id="keep_usb_battery_on_pulse_duration_msecSelector">
               <option value="100">100ms</option>
               <option value="500">500ms</option>
               <option value="1000">1000ms</option>
               <option value="2000">2000ms</option>
             </select>
-          </div>
-        </div>
-      </div>
+                    </div>
+                </div>
+            </div>
 
-      <!-- Uncomment to debug -->
-      <!-- <div class="receiver">
+            <!-- Uncomment to debug -->
+            <!-- <div class="receiver">
         <div class="lines-header">Receiver</div>
         <div class="lines-body">
           <div id="receiver_lines" class="lines"></div>
         </div>
       </div> -->
 
-    </div>
+        </div>
 </body>
 
 </html>
