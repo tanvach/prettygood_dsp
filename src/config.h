@@ -92,7 +92,7 @@ void LoadConfig(boolean reload_defaults = false) {
     new_config_doc["enhance_bass_cutoff"] = 1;
 
     // Auto volume
-    new_config_doc["auto_volume"] = true;
+    new_config_doc["auto_volume"] = false;
     new_config_doc["auto_volume_max_gain"] = 0;
     new_config_doc["auto_volume_lbi_response"] = 0;
     new_config_doc["auto_volume_hard_limit"] = 0;
