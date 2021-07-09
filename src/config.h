@@ -57,7 +57,7 @@ void LoadConfig(boolean reload_defaults = false) {
     new_config_doc["version"] = VERSION;
     
     // Default values
-    new_config_doc["volume"] = 0.7;
+    new_config_doc["volume"] = 0.75;
 
     // EQ Settings
     new_config_doc["filter_type"]  = 1; // 1 = Parametric EQ
