@@ -1,0 +1,13 @@
+If the MCU is not readback protected
+
+1) Open J-Link commander
+2) Run commands as follows
+usb 0
+si 1
+savebin C:\Users\tanva\Downloads\fw.bin 0x00000000 0x40000
+Here the syntax of "savebin" command is
+
+savebin save_path init_memory_address binary_size_in_bytes
+The process may also be automated with a J-Link script.
+
+For more info, look at the J-Link User manual.
